@@ -166,6 +166,30 @@
         .digit-scroll { display: inline-block; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .btn-gold { background: linear-gradient(135deg, #d97706 0%, #fbbf24 100%); color: black; font-weight: bold; border: none; transition: all 0.3s ease; }
         .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
+
+/* --- DINO DIAMOND INTERACTION --- */
+        .diamond-particle {
+            position: absolute;
+            pointer-events: none;
+            animation: floatDiamond 1.2s ease-out forwards;
+            font-size: 1rem;
+            z-index: 20;
+            text-shadow: 0 0 10px rgba(103, 232, 249, 0.8);
+        }
+
+        @keyframes floatDiamond {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 1; transform: translateY(-15px) scale(1); }
+            100% { transform: translateY(-50px) scale(0.8); opacity: 0; }
+        }
+
+        .dino-woke {
+            /* Pas de tremblement, juste un glow propre et une couleur Cyan */
+            transform: scale(1.1);
+            color: #67e8f9; /* Cyan-300 */
+            filter: drop-shadow(0 0 20px rgba(34, 211, 238, 0.6));
+        }
+
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-gray-100 font-sans">
@@ -516,6 +540,36 @@
     <div id="aiModal" class="hidden fixed inset-0 z-[60] modal-backdrop flex items-center justify-center px-4"><div class="bg-[#111] border border-white/10 rounded-3xl w-full max-w-2xl h-[80vh] flex flex-col shadow-2xl"><div class="px-6 py-4 border-b border-white/5 flex justify-between items-center"><h3 class="font-bold text-white flex items-center gap-2" id="aiModalTitle"><i class="fa-solid fa-brain text-indigo-400"></i> Assistant IA</h3><button onclick="closeAiModal()" class="text-gray-500 hover:text-white"><i class="fa-solid fa-times"></i></button></div><div id="aiLoading" class="hidden absolute inset-0 z-50 bg-[#0a0a0a] flex flex-col items-center justify-center"><div class="w-12 h-12 bg-white text-black flex items-center justify-center font-display font-black text-xl tracking-tighter rounded-sm animate-pulse-fast">IA</div><p class="mt-4 text-gray-500 text-sm">Réflexion en cours...</p></div><div id="aiContent" class="flex-grow overflow-y-auto p-6 bg-[#0a0a0a] flashcard-content max-w-none prose prose-invert prose-p:text-gray-300 prose-headings:text-white hidden"></div><div id="tutorChatInterface" class="hidden flex flex-col h-full overflow-hidden"><div id="chatHistory" class="flex-grow overflow-y-auto p-4 space-y-4 bg-[#0a0a0a] scroll-smooth"></div><div class="p-4 border-t border-white/10 bg-[#111] flex gap-2"><input type="text" id="chatInput" class="flex-grow bg-[#222] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-blue-500 transition text-sm" placeholder="Posez votre question sur l'item..." onkeypress="if(event.key === 'Enter') sendChatMessage()"><button onclick="sendChatMessage()" class="w-12 h-12 flex items-center justify-center bg-blue-600 text-white rounded-xl hover:bg-blue-500 transition"><i class="fa-solid fa-paper-plane"></i></button></div></div></div></div>
     <div id="confirmModal" class="hidden fixed inset-0 z-[90] modal-backdrop flex items-center justify-center px-4"><div class="bg-[#111] border border-white/10 rounded-2xl p-6 shadow-2xl max-w-sm w-full"><h3 class="text-lg font-bold text-white mb-2">Confirmation</h3><p class="text-gray-400 text-sm mb-6">Voulez-vous vraiment supprimer cette ressource ?</p><div class="flex justify-end gap-3"><button onclick="closeConfirmModal()" class="px-4 py-2 text-gray-400 hover:text-white text-sm font-medium">Non</button><button id="confirmBtnAction" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700">Oui, supprimer</button></div></div></div>
 
+<div id="chronoStartOverlay" class="fixed inset-0 z-[200] hidden flex flex-col items-center justify-center w-screen h-screen bg-black/80 backdrop-blur-xl transition-opacity duration-700 opacity-0 pointer-events-none">
+    
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div class="w-[500px] h-[500px] bg-cyan-500/20 blur-[120px] rounded-full"></div>
+    </div>
+
+    <div class="relative z-10 flex flex-col items-center transform scale-110">
+        <div class="relative mb-8">
+            <div class="absolute inset-0 rounded-full border border-cyan-500/30 animate-ping opacity-20"></div>
+            <div class="absolute inset-0 rounded-full border border-cyan-400/50 animate-[spin_3s_linear_infinite]"></div>
+            <div class="w-32 h-32 rounded-full bg-cyan-900/20 border border-cyan-500/30 flex items-center justify-center shadow-[0_0_30px_rgba(34,211,238,0.3)] backdrop-blur-md">
+                <i class="fa-solid fa-dragon text-5xl text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.8)] animate-pulse"></i>
+            </div>
+        </div>
+
+        <div class="text-center space-y-3">
+            <h2 class="text-4xl md:text-5xl font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-blue-500 tracking-[0.15em] uppercase drop-shadow-2xl animate-fade-in-up">
+                ACTIVATION
+            </h2>
+            
+            <div class="flex items-center justify-center gap-4 opacity-80">
+                <div class="h-px w-12 bg-gradient-to-r from-transparent to-cyan-500"></div>
+                <p class="text-cyan-100 font-mono text-sm font-bold uppercase tracking-widest">
+                    Focus Concours : Maximal
+                </p>
+                <div class="h-px w-12 bg-gradient-to-l from-transparent to-cyan-500"></div>
+            </div>
+        </div>
+    </div>
+</div>
     <script>
         var userResources = [], userStatus = {}, userTodos = [], courses = [], celebrationTimeout;
         var userName = "", userAlias = "Docteur", userApiKey = "", chatHistory = [], currentRevisionContext = "";
@@ -1436,22 +1490,65 @@
         const DINO_RUN = 'fa-dragon fa-bounce'; 
         const DINO_JUMP = 'fa-dragon fa-beat'; 
 
+        const dinoMessages = [
+            "Système prêt.", "Focus activé.", "En attente d'ordres.", 
+            "Batterie pleine.", "Cerveau : 100%", "Objectif : Major", 
+            "Données synchronisées."
+        ];
+
         function triggerDinoJump() {
             const dinoIcon = document.getElementById('dinoIcon');
-            const visuals = getDinoVisuals();
+            const dinoWrapper = document.getElementById('dinoWrapper');
+            const dinoZzz = document.getElementById('dinoZzz');
+            
+            if (isTimerRunning) {
+                dinoIcon.className = `fa-solid ${DINO_JUMP} text-6xl text-white transition-all duration-300`;
+                setTimeout(() => updateDinoVisuals(), 500);
+                return;
+            }
 
-            if (!isTimerRunning) {
-                dinoIcon.className = `fa-solid ${DINO_JUMP} text-6xl text-gray-500 transition-colors duration-300`;
-                setTimeout(() => {
-                    dinoIcon.className = `fa-solid ${DINO_IDLE} text-6xl text-gray-500 transition-colors duration-300 animate-dino-sleep`;
-                }, 500);
+            // --- ANIMATION "DIAMANT / TECH" ---
+            
+            // 1. Masquer le Zzz
+            dinoZzz.classList.add('opacity-0');
+
+            // 2. Activation propre (Glow Cyan)
+            dinoIcon.className = `fa-solid fa-dragon text-6xl transition-all duration-300 dino-woke`;
+            
+            // 3. Message "Tech"
+            const msg = dinoMessages[Math.floor(Math.random() * dinoMessages.length)];
+            showToast(msg, 'info'); 
+
+            // 4. Particules Diamants (3 suffisent pour rester propre)
+            for (let i = 0; i < 3; i++) {
+                createDiamondParticle(dinoWrapper);
             }
-            else {
-                dinoIcon.className = `fa-solid ${DINO_JUMP} text-6xl ${visuals.color} transition-all duration-300`;
-                setTimeout(() => {
-                    updateDinoVisuals(); 
-                }, 500);
-            }
+
+            // 5. Retour au calme
+            setTimeout(() => {
+                dinoIcon.className = `fa-solid ${DINO_IDLE} text-6xl text-gray-500 transition-colors duration-500 animate-dino-sleep`;
+                dinoZzz.classList.remove('opacity-0');
+            }, 1500);
+        }
+
+        function createDiamondParticle(parent) {
+            const particle = document.createElement('i');
+            // Icône Diamant uniquement
+            particle.className = `fa-solid fa-gem text-cyan-300 diamond-particle`;
+            
+            // Position aléatoire légère
+            const leftOffset = (Math.random() - 0.5) * 50; 
+            particle.style.left = `calc(50% + ${leftOffset}px)`;
+            particle.style.top = '-10px';
+            
+            // Légère variation de délai
+            particle.style.animationDelay = Math.random() * 0.2 + 's';
+
+            parent.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 1200);
         }
 
         function getDinoVisuals() {
@@ -1493,6 +1590,9 @@
                 dinoIcon.className = `fa-solid ${DINO_IDLE} text-6xl text-gray-500 transition-colors duration-300 animate-dino-sleep`;
                 dinoZzz.classList.remove('hidden');
             } else {
+if (seconds === 0) {
+                triggerChronoAnimation();
+            }
                 timerInterval = setInterval(() => { seconds++; updateTimerDisplay(); updateDinoVisuals(); checkTimerMilestones(); }, 1000);
                 icon.classList.remove('fa-play'); icon.classList.add('fa-pause');
                 btn.classList.add('animate-button-pulse');
@@ -1829,8 +1929,15 @@
         function toggleSuggestionDone(itemId) {
             dailySuggestionsDone[itemId] = !dailySuggestionsDone[itemId];
             saveDailySuggestionState();
-            renderSuggestions(false, true); 
-            checkAllSuggestionsDone();
+            
+            // On met à jour l'affichage
+            renderSuggestions(false); 
+            
+            // On vérifie la victoire UNIQUEMENT ici (interaction utilisateur)
+            // Et seulement si on vient de cocher la case (pas décocher)
+            if (dailySuggestionsDone[itemId]) {
+                checkAllSuggestionsDone();
+            }
         }
 
         function checkAllSuggestionsDone() {
@@ -1872,7 +1979,7 @@
             }, 3500);
         }
 
-        function renderSuggestions(forceRefresh = false, skipCheck = false) {
+        function renderSuggestions(forceRefresh = false) {
             const container = document.getElementById('suggestionList');
             const block = document.getElementById('suggestionBlock');
 
@@ -1892,10 +1999,9 @@
                     block.classList.remove('hidden');
                 }
             }
-
-            if (!skipCheck) {
-                checkAllSuggestionsDone();
-            }
+            
+            // J'ai supprimé le bloc "if (!skipCheck) { checkAllSuggestionsDone(); }" ici.
+            // C'est ce qui causait le bug de répétition.
         }
 
         // --- UPDATED VUES COUNTER ---
@@ -2347,6 +2453,31 @@
 
         // Init App
         initApp();
+
+function triggerChronoAnimation() {
+    const overlay = document.getElementById('chronoStartOverlay');
+    if (!overlay) return;
+
+    // 1. Affichage
+    overlay.classList.remove('hidden', 'pointer-events-none');
+    
+    // Petit délai pour lancer la transition CSS (fade in)
+    requestAnimationFrame(() => {
+        overlay.classList.remove('opacity-0');
+        overlay.classList.add('opacity-100');
+    });
+
+    // 2. Disparition (2.5 secondes total)
+    setTimeout(() => {
+        overlay.classList.remove('opacity-100');
+        overlay.classList.add('opacity-0');
+        
+        // Attendre la fin de la transition CSS (700ms) pour masquer l'élément
+        setTimeout(() => {
+            overlay.classList.add('hidden', 'pointer-events-none');
+        }, 700); 
+    }, 2500);
+}
 
 // --- FONCTIONS DE PARTAGE (EXPORT/IMPORT) ---
 
