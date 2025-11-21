@@ -292,6 +292,16 @@
                     <i class="fa-solid fa-cog text-lg"></i>
                 </button>
 
+<div class="hidden md:flex flex-col items-end justify-center mr-4 w-32">
+    <div class="flex justify-between w-full text-[10px] font-bold uppercase mb-1">
+        <span class="text-blue-400">Niveau <span id="lvlDisplay">1</span></span>
+        <span class="text-gray-500"><span id="xpDisplay">0</span> XP</span>
+    </div>
+    <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden border border-white/5">
+        <div id="xpBar" class="h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-700" style="width: 0%"></div>
+    </div>
+</div>
+
                 <button onclick="openGeneralModal()" class="bg-white text-black hover:bg-gray-200 px-6 py-2 rounded-full font-bold text-xs uppercase tracking-wider transition shadow-[0_0_15px_rgba(255,255,255,0.3)]">Ajouter</button>
             </div>
         </div>
@@ -575,6 +585,8 @@
         var seconds = 0;
         var isTimerRunning = false;
         var timerInterval;
+	var userXP = 0;
+	var userLevel = 1;
 
         // --- MOTIVATIONAL QUOTES (POUR LES MILESTONES DU TIMER) ---
         const motivationalQuotes = [
@@ -1044,7 +1056,9 @@ const defaultConfig = { color: 'gray', icon: 'fa-book-medical', gradient: 'from-
             }
         });
 
+
         // --- INIT & PERSISTENCE ---
+
 function initApp() {
             // 1. Afficher la date du jour
             const options = { weekday: 'long', day: 'numeric', month: 'long' };
@@ -1054,6 +1068,12 @@ function initApp() {
             // 2. Charger le profil
             loadProfile();
             updateGreetingDisplay();
+	const savedXP = localStorage.getItem('flashmed_xp');
+	    if(savedXP) {
+        	userXP = parseInt(savedXP);
+        	userLevel = Math.floor(userXP / 1000) + 1; // 1 Niveau tous les 1000 points
+    }
+    	updateXPDisplay(); // On affichera la barre
             
             // 3. Charger les données
             const savedRes = localStorage.getItem('flashmed_resources');
@@ -1192,7 +1212,8 @@ function initApp() {
             localStorage.setItem('flashmed_resources', JSON.stringify(userResources));
             localStorage.setItem('flashmed_status', JSON.stringify(userStatus));
             localStorage.setItem('flashmed_todos', JSON.stringify(userTodos));
-            localStorage.setItem('flashmed_vues', JSON.stringify(userVues)); 
+            localStorage.setItem('flashmed_vues', JSON.stringify(userVues));
+	    localStorage.setItem('flashmed_xp', userXP); 
             updateStats(); 
         }
 
@@ -1741,30 +1762,53 @@ playSound('click');
             });
         }
         
-        function incrementVues(itemId) {
-            userVues[itemId] = (userVues[itemId] || 0) + 1;
-            
-            const MAX_VUES_FOR_MAITRISE = 5;
-            
-            // Instant DOM Update for smooth experience
-            const vuesContainer = document.getElementById(`vues-container-${itemId}`);
-            if(vuesContainer) {
-                vuesContainer.innerHTML = getVuesBarHTML(userVues[itemId], itemId);
-            }
+function incrementVues(itemId) {
+    // 1. Incrémentation
+    userVues[itemId] = (userVues[itemId] || 0) + 1;
+    
+    // 2. Gain d'XP immédiat pour l'action (Révision)
+    addXP(15, 'Révision ajoutée'); 
 
-            if (userVues[itemId] >= MAX_VUES_FOR_MAITRISE && userStatus[itemId] !== 'maitrise') {
-                userStatus[itemId] = 'maitrise';
-                saveData(); // Save state
-                buildCourses(); // Rebuild course object state
-                render(); // Full render needed for status change visual update
-                showCelebration();
-                showToast(`Item ${itemId} MAÎTRISÉ (5 vues atteintes) !`, 'success');
-                return; 
-            }
+    let needsFullRender = false;
+    let message = `Vue #${userVues[itemId]} enregistrée`;
 
-            saveData(); // Save but skip full render
-            showToast(`Vue #${userVues[itemId]} enregistrée pour Item ${itemId}`, 'info');
+    // 3. Passage automatique en "LU" (si pas déjà fait)
+    if (userStatus[itemId] !== 'lu' && userStatus[itemId] !== 'maitrise') {
+        userStatus[itemId] = 'lu';
+        addXP(50, 'Nouveau cours Lu'); // Bonus pour le changement de statut
+        playSound('success');          // Petit son de validation
+        needsFullRender = true;        // On devra redessiner la carte en vert
+        message = "Marqué comme LU + Vue ajoutée";
+    }
+
+    // 4. Passage automatique en "MAÎTRISÉ" (5 vues)
+    const MAX_VUES_FOR_MAITRISE = 5;
+    if (userVues[itemId] >= MAX_VUES_FOR_MAITRISE && userStatus[itemId] !== 'maitrise') {
+        userStatus[itemId] = 'maitrise';
+        addXP(200, 'Maîtrise (5 vues)'); // Gros Bonus
+        showCelebration();               // Animation + Son Mastery
+        needsFullRender = true;          // On devra redessiner la carte en or
+        message = `Item ${itemId} MAÎTRISÉ !`;
+    }
+
+    // 5. Sauvegarde
+    saveData();
+
+    // 6. Mise à jour visuelle
+    if (needsFullRender) {
+        // Si le statut a changé (Gris -> Vert ou Vert -> Or), on recharge la grille
+        buildCourses(); 
+        render();       
+    } else {
+        // Sinon, on met juste à jour les petites barres (c'est plus fluide)
+        const vuesContainer = document.getElementById(`vues-container-${itemId}`);
+        if(vuesContainer) {
+            vuesContainer.innerHTML = getVuesBarHTML(userVues[itemId], itemId);
         }
+    }
+
+    showToast(message, needsFullRender ? 'success' : 'info');
+}
 
         function resetVues(itemId) {
             userVues[itemId] = 0;
@@ -1894,6 +1938,8 @@ playSound('click');
 
 function toggleSuggestionDone(itemId) {
     // 1. Si l'item est déjà validé, on le décoche (annulation)
+    // Note : On ne retire pas les points pour ne pas frustrer l'utilisateur, 
+    // mais on pourrait le faire si on voulait être strict.
     if (dailySuggestionsDone[itemId]) {
         dailySuggestionsDone[itemId] = false;
         saveDailySuggestionState();
@@ -1901,7 +1947,7 @@ function toggleSuggestionDone(itemId) {
         return;
     }
 
-    // 2. Vérification : Est-ce que l'utilisateur a tout consulté ?
+    // 2. Vérification des ressources (Est-ce que tout a été vu ?)
     const availableResources = userResources.filter(r => r.itemId === itemId);
     const viewedTypes = sessionViewedResources[itemId] || [];
     const requiredTypes = ['video', 'audio', 'flash', 'fiche'];
@@ -1931,31 +1977,38 @@ function toggleSuggestionDone(itemId) {
         return; 
     }
 
-    // 4. SUCCÈS (Si tout est bon)
+    // 4. SUCCÈS (Tout est bon)
     dailySuggestionsDone[itemId] = true;
     saveDailySuggestionState();
     
-    playSound('success'); // Son de validation simple ("Ding")
+    // --- AJOUT XP ICI ---
+    addXP(30, 'Suggestion validée'); // +30 XP pour l'effort
+    // --------------------
+
+    playSound('success'); 
     
     renderSuggestions(false);
     
-    // 5. VÉRIFICATION FINALE : Est-ce que c'était le dernier ?
-    checkAllSuggestionsDone(); 
-}
-
-function checkAllSuggestionsDone() {
-    // On vérifie si la liste n'est pas vide ET si tous les items sont validés
-    if (currentSuggestions.length > 0 && currentSuggestions.every(s => dailySuggestionsDone[s.id])) {
-        
-        // C'est le grand chelem !
-        setTimeout(() => {
-            playSound('levelUp'); // Son de victoire majeure
-            showCelebrationSuggestions(); // L'animation visuelle
-            tryUnlockNewAvatar(); // Tentative de débloquer un avatar
-        }, 500); // Petit délai pour laisser le temps au "Ding" de finir
+    // 5. Vérification Grand Chelem
+    if (dailySuggestionsDone[itemId]) {
+        checkAllSuggestionsDone();
     }
 }
 
+function checkAllSuggestionsDone() {
+    if (currentSuggestions.length > 0 && currentSuggestions.every(s => dailySuggestionsDone[s.id])) {
+        setTimeout(() => {
+            addXP(500, 'Grand Chelem !'); // BONUS MASSIF
+            
+            // Le son levelUp est géré dans addXP si on passe un niveau, 
+            // sinon on peut le jouer ici aussi si on veut doubler l'effet :
+            // playSound('levelUp'); 
+            
+            showCelebrationSuggestions(); 
+            tryUnlockNewAvatar(); 
+        }, 500); 
+    }
+}
         function showUnlockToast(icon) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -2180,24 +2233,36 @@ function showCelebrationSuggestions() {
 
         function populateFilters() { const select = document.getElementById('matiereFilter'); const matieres = [...new Set(rawItems.map(i => i.m))].sort(); select.innerHTML = '<option value="all">Toutes</option>' + matieres.map(m => `<option value="${m}">${m}</option>`).join(''); }
 
-function toggleStatus(id, type) { 
-            const isUpgrade = type === 'maitrise' && userStatus[id] !== 'maitrise'; 
-            if (type === 'maitrise' && userStatus[id] === 'maitrise') {
-                userStatus[id] = 'lu';
-            } else {
-                userStatus[id] = userStatus[id] === type ? null : type; 
-            }
-            // ------------------------
+	function toggleStatus(id, type) { 
+    const isUpgrade = type === 'maitrise' && userStatus[id] !== 'maitrise'; 
+    const oldStatus = userStatus[id]; // On mémorise l'ancien état
+    
+    if (type === 'maitrise' && userStatus[id] === 'maitrise') {
+        userStatus[id] = 'lu';
+    } else {
+        userStatus[id] = userStatus[id] === type ? null : type; 
+    }
 
-            saveData(); 
-            buildCourses(); 
-            updateStats(); 
-            render(); 
-            
-            if(isUpgrade) showCelebration(); 
-        }
-        
-function playSound(type) {
+    // --- DISTRIBUTION DES POINTS ---
+    if (userStatus[id] === 'lu' && oldStatus !== 'lu' && oldStatus !== 'maitrise') {
+        addXP(50, 'Cours Lu');
+        playSound('success');
+    }
+    else if (userStatus[id] === 'maitrise' && oldStatus !== 'maitrise') {
+        addXP(200, 'Cours Maîtrisé'); // Gros gain !
+        // Le son 'mastery' est déjà géré dans showCelebration appelé plus bas
+    }
+    // -------------------------------
+
+    saveData(); 
+    buildCourses(); 
+    updateStats(); 
+    render(); 
+    
+    if(isUpgrade) showCelebration(); 
+}        
+
+	function playSound(type) {
             if (!audioSystem.enabled) return;
             const sound = audioSystem.sounds[type];
             if (sound) {
@@ -2301,6 +2366,7 @@ function openModalForItem(id, type) {
         }
 
         function openPlayer(link, type, title) {
+addXP(10, `Lecture ${type}`);
             playerModal.classList.remove('hidden'); playerModal.classList.add('flex'); void playerModal.offsetWidth; playerModal.classList.remove('opacity-0', 'scale-95');
             document.getElementById('playerTitle').innerText = title || "Lecture";
             const container = document.getElementById('playerContainer'); const wrapper = document.getElementById('playerWrapper'); const loader = document.getElementById('playerLoader');
@@ -2353,6 +2419,45 @@ function openModalForItem(id, type) {
             });
         }
         
+function addXP(amount, reason) {
+    userXP += amount;
+    
+    // Calcul du niveau (1 niveau = 1000 XP)
+    const newLevel = Math.floor(userXP / 1000) + 1;
+    
+    // Sauvegarde
+    saveData();
+    
+    // Mise à jour visuelle
+    updateXPDisplay();
+    
+    // Feedback visuel (Toast)
+    if (newLevel > userLevel) {
+        userLevel = newLevel;
+        playSound('levelUp'); // Son de victoire
+        showCelebration(); // Réutilise l'animation de victoire existante
+        showToast(`NIVEAU ${userLevel} ATTEINT !`, 'success');
+    } else {
+        // Petit feedback discret pour les points
+        showToast(`+${amount} XP : ${reason}`, 'info');
+    }
+}
+
+function updateXPDisplay() {
+    const xpEl = document.getElementById('xpDisplay');
+    const lvlEl = document.getElementById('lvlDisplay');
+    const barEl = document.getElementById('xpBar');
+    
+    if(xpEl && lvlEl && barEl) {
+        xpEl.innerText = userXP;
+        lvlEl.innerText = userLevel;
+        
+        // Calcul pourcentage barre (ex: 1250 XP -> on est à 250/1000 du niveau 2)
+        const progress = (userXP % 1000) / 10; // /1000 * 100
+        barEl.style.width = `${progress}%`;
+    }
+}
+
         // --- AI FEATURE 1: FLASHCARD SYNTHESIS ---
         async function generateFlashcard(item, title) {
             const modal = document.getElementById('playerModal');
