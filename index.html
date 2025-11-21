@@ -212,6 +212,8 @@
         }
 
     </style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
 </head>
 <body class="min-h-screen flex flex-col text-gray-100 font-sans">
 
@@ -451,8 +453,9 @@
         <div id="emptyState" class="hidden text-center py-20 text-gray-500">Aucun résultat</div>
     </main>
 
-    <div id="globalSettingsModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+<div id="globalSettingsModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity duration-300 opacity-0">
         <div class="glass-panel w-full max-w-2xl p-0 rounded-3xl transform scale-95 transition-all duration-300 relative overflow-hidden flex flex-col max-h-[90vh]" id="globalSettingsContent">
+            
             <div class="p-6 border-b border-white/10 bg-black/40 flex justify-between items-center">
                 <div class="flex items-center gap-4">
                     <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-800 to-black border border-white/10 flex items-center justify-center">
@@ -465,7 +468,9 @@
                 </div>
                 <button onclick="closeGlobalSettings()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition"><i class="fa-solid fa-times"></i></button>
             </div>
+
             <div class="p-8 overflow-y-auto custom-scrollbar space-y-8">
+                
                 <section>
                     <h3 class="text-xs font-bold text-blue-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-user"></i> Identité</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -485,7 +490,9 @@
                         </div>
                     </div>
                 </section>
+
                 <div class="h-px w-full bg-white/5"></div>
+
                 <section>
                     <h3 class="text-xs font-bold text-gold-500 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-flag-checkered"></i> Objectif Concours</h3>
                     <div class="bg-gold-500/5 border border-gold-500/20 rounded-2xl p-5 flex flex-col md:flex-row gap-6 items-center">
@@ -500,7 +507,9 @@
                         </div>
                     </div>
                 </section>
+
                 <div class="h-px w-full bg-white/5"></div>
+
                 <section>
                     <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-4 flex items-center gap-2"><i class="fa-solid fa-microchip"></i> IA & Données</h3>
                     <div class="mb-6">
@@ -511,6 +520,7 @@
                         </div>
                         <p class="text-[10px] text-gray-600 mt-2 ml-1">Nécessaire pour le Tuteur IA.</p>
                     </div>
+                    
                     <div class="grid grid-cols-2 gap-4">
                         <button onclick="exportData()" class="group px-4 py-3 rounded-xl bg-[#151515] border border-white/10 hover:border-blue-500/50 hover:bg-blue-500/10 transition text-left">
                             <div class="flex items-center gap-3 mb-1">
@@ -528,12 +538,36 @@
                         </button>
                         <input type="file" id="importFile" class="hidden" onchange="importData(this)">
                     </div>
+
+                    <div class="mt-4 pt-4 border-t border-white/5">
+                        <button onclick="startTutorial(); closeGlobalSettings()" class="text-xs font-bold uppercase text-blue-400 hover:text-white transition flex items-center gap-2">
+                            <i class="fa-solid fa-circle-question"></i>
+                            Relancer le tutoriel
+                        </button>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-white/5">
+                        <h3 class="text-xs font-bold text-red-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Attention
+                        </h3>
+                        <button onclick="resetProgress()" class="w-full py-3 rounded-xl border border-red-500/30 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition font-bold text-sm flex items-center justify-center gap-2 group">
+                            <i class="fa-solid fa-trash-can group-hover:animate-bounce"></i> 
+                            Réinitialiser toute la progression
+                        </button>
+                        <p class="text-[10px] text-gray-500 mt-2 text-center">
+                            Efface : XP, Niveaux, Statuts, Vues, ToDos.<br>
+                            <span class="text-gray-400">Conserve : Vos liens (Vidéos/Fiches), Clé API, Profil.</span>
+                        </p>
+                    </div>
+
                 </section>
             </div>
+
             <div class="p-6 border-t border-white/10 bg-black/40 flex justify-end gap-3">
                 <button onclick="closeGlobalSettings()" class="px-6 py-3 rounded-xl text-sm font-bold text-gray-400 hover:text-white transition">Annuler</button>
                 <button onclick="saveGlobalSettings()" class="px-8 py-3 rounded-xl bg-white text-black text-sm font-bold hover:bg-gray-200 transition shadow-lg flex items-center gap-2"><span>Enregistrer tout</span><i class="fa-solid fa-check"></i></button>
             </div>
+
         </div>
     </div>
 
@@ -586,7 +620,7 @@
         var isTimerRunning = false;
         var timerInterval;
 	var userXP = 0;
-	var userLevel = 1;
+	var userLevel = 0;
 
         // --- MOTIVATIONAL QUOTES (POUR LES MILESTONES DU TIMER) ---
         const motivationalQuotes = [
@@ -1071,7 +1105,7 @@ function initApp() {
 	const savedXP = localStorage.getItem('flashmed_xp');
 	    if(savedXP) {
         	userXP = parseInt(savedXP);
-        	userLevel = Math.floor(userXP / 1000) + 1; // 1 Niveau tous les 1000 points
+        	userLevel = Math.floor(userXP / 1000); // 1 Niveau tous les 1000 points
     }
     	updateXPDisplay(); // On affichera la barre
             
@@ -1158,7 +1192,13 @@ function initApp() {
             updateStats();
             render();
             renderTodos();
+setTimeout(() => {
+        const hasSeenTutorial = localStorage.getItem('flashmed_tutorial_seen');
+        if (!hasSeenTutorial) {
+            startTutorial();
         }
+    }, 1000); // Délai d'1 seconde pour laisser l'animation d'intro se finir
+}
 
         function handleFilterChange(selectElement) {
             const val = selectElement.value;
@@ -2231,6 +2271,80 @@ function showCelebrationSuggestions() {
 
         // --- UTILS ---
 
+function startTutorial() {
+    const driver = window.driver.js.driver;
+    
+    const driverObj = driver({
+        showProgress: true,
+        nextBtnText: 'Suivant ->',
+        prevBtnText: '<- Retour',
+        doneBtnText: 'C\'est parti !',
+        steps: [
+            { 
+                element: '#greetingDisplay', 
+                popover: { 
+                    title: 'Bienvenue sur FlashMed', 
+                    description: 'Votre cockpit ultime pour réussir l\'EDN/R2C. Laissez-moi vous faire visiter.', 
+                    side: "bottom", 
+                    align: 'start' 
+                } 
+            },
+            { 
+                element: '#xpDisplay', 
+                popover: { 
+                    title: 'Système d\'XP', 
+                    description: 'Gagnez de l\'expérience à chaque action : lecture, maîtrise, ou validation d\'objectifs. Montez de niveau pour rester motivé !', 
+                    side: "left", 
+                    align: 'start' 
+                } 
+            },
+            { 
+                element: '#dinoWrapper', 
+                popover: { 
+                    title: 'Mode Focus', 
+                    description: 'Cliquez sur le Dinosaure ou le bouton Play pour lancer le chrono. Des sons et animations vous accompagneront.', 
+                    side: "right", 
+                    align: 'center' 
+                } 
+            },
+            { 
+                element: '#todoInput', 
+                popover: { 
+                    title: 'Objectifs du Jour', 
+                    description: 'Tapez ici vos priorités (ex: "Item 234"). Cochez-les une fois terminées pour gagner de l\'XP.', 
+                    side: "top", 
+                    align: 'start' 
+                } 
+            },
+            { 
+                element: '#filterBar', 
+                popover: { 
+                    title: 'Recherche & Filtres', 
+                    description: 'Trouvez n\'importe quel cours instantanément. Filtrez par matière via l\'icône à droite.', 
+                    side: "bottom", 
+                    align: 'center' 
+                } 
+            },
+            { 
+                element: '#coursesGrid', 
+                popover: { 
+                    title: 'Vos Cours', 
+                    description: 'Ici s\'affichent les items. Utilisez les boutons pour ajouter des liens (Vidéo, PDF, Audio) ou valider votre avancement (Lu / Maîtrisé).', 
+                    side: "top", 
+                    align: 'start' 
+                } 
+            }
+        ],
+        onDestroyStarted: () => {
+            // Si l'utilisateur ferme le tuto, on considère qu'il l'a vu
+            localStorage.setItem('flashmed_tutorial_seen', 'true');
+            driverObj.destroy();
+        },
+    });
+
+    driverObj.drive();
+}
+
         function populateFilters() { const select = document.getElementById('matiereFilter'); const matieres = [...new Set(rawItems.map(i => i.m))].sort(); select.innerHTML = '<option value="all">Toutes</option>' + matieres.map(m => `<option value="${m}">${m}</option>`).join(''); }
 
 	function toggleStatus(id, type) { 
@@ -2311,6 +2425,7 @@ const dragonIcon = document.getElementById('iconDragon');
             }, 2500);
         }
 
+
         function filterByMatiere(m) { 
             document.getElementById('matiereFilter').value = m; 
             handleFilterChange(document.getElementById('matiereFilter')); 
@@ -2325,6 +2440,45 @@ const dragonIcon = document.getElementById('iconDragon');
             render(); 
             window.scrollTo(0,0); 
         }
+
+function resetProgress() {
+    // 1. Double confirmation pour éviter les drames
+    if(confirm("⚠️ ATTENTION : Vous allez effacer toute votre progression !\n\n- Tous les items repasseront en 'Non lu'\n- Votre XP et Niveau reviendront à 0\n- Vos statistiques seront effacées\n\nVos liens ajoutés (vidéos, fiches) et votre profil SERONT CONSERVÉS.\n\nÊtes-vous sûr de vouloir recommencer à zéro ?")) {
+        
+        // 2. Réinitialisation des variables de progression
+        userStatus = {};
+        userTodos = [];
+        userVues = {};
+        userXP = 0;
+        userLevel = 0;
+        
+        // On vide aussi les suggestions et l'historique de session
+        dailySuggestionsDone = {};
+        currentSuggestions = [];
+        sessionViewedResources = {};
+
+        // 3. Nettoyage du LocalStorage (On ne touche PAS à 'flashmed_resources' ni 'apiKey')
+        localStorage.removeItem('flashmed_status');
+        localStorage.removeItem('flashmed_todos');
+        localStorage.removeItem('flashmed_vues');
+        localStorage.removeItem('flashmed_xp');
+        localStorage.removeItem('flashmed_daily_suggestions');
+
+        // 4. Mise à jour visuelle immédiate
+        updateStats();
+        updateXPDisplay();
+        render();
+        renderTodos();
+        
+        // On force la régénération de nouvelles suggestions
+        renderSuggestions(true);
+
+        // 5. Feedback
+        playSound('error'); // Petit son dramatique
+        showToast("Progression réinitialisée avec succès.", "success");
+        closeGlobalSettings();
+    }
+}
 
         // --- MODALS & PLAYER ---
         const addModal = document.getElementById('addModal');
@@ -2423,7 +2577,7 @@ function addXP(amount, reason) {
     userXP += amount;
     
     // Calcul du niveau (1 niveau = 1000 XP)
-    const newLevel = Math.floor(userXP / 1000) + 1;
+    const newLevel = Math.floor(userXP / 1000);
     
     // Sauvegarde
     saveData();
