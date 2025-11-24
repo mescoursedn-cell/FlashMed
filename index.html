@@ -92,6 +92,28 @@
     <!-- Google Fonts --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@400;600;900&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
     <!-- Markdown --><script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+    <script>
+        // 2. CONFIGURATION DE VOTRE PROJET FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAbvWHO46zkGVgTiYBwAYjOW0Lo1LzA4e8",
+            authDomain: "ultimed-2d332.firebaseapp.com",
+            projectId: "ultimed-2d332",
+            storageBucket: "ultimed-2d332.firebasestorage.app",
+            messagingSenderId: "944246190546",
+            appId: "1:944246190546:web:210e73fd118a955dbe580b"
+            measurementId: "G-QS93Y4XXP6"
+        };
+        
+        // 3. INITIALISATION GLOBALE
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+
     <style>
         body { background-color: #050505; color: #e5e7eb; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .depth-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #111, #050505); overflow: hidden; }
@@ -824,7 +846,6 @@
 
 <div id="itemDetailView" class="hidden animate-fade-in-up h-full flex flex-col">
 
-
 <div class="flex flex-col gap-6 mb-8">
                 
                 <div>
@@ -1301,6 +1322,29 @@
         <div id="subjectBurstCircle" class="rounded-full absolute"></div>
         
         <i id="subjectBurstIcon" class="relative z-10 text-[50vmin] opacity-0 transform transition-all"></i>
+
+    <div id="loginOverlay" class="fixed inset-0 z-[300] bg-dark-950 flex items-center justify-center transition-opacity duration-500 opacity-100">
+        <div class="w-full max-w-md p-8 card-panel rounded-3xl text-center">
+            <h3 class="text-3xl font-display font-black text-blue-500 mb-6 drop-shadow-lg">Ultimed Login</h3>
+            
+            <p class="text-gray-400 text-sm mb-6">Connectez-vous pour accéder à votre cockpit.</p>
+            
+            <div class="space-y-4">
+                <input type="email" id="loginEmail" placeholder="Identifiant (Email)" 
+                       class="w-full bg-[#151515] border border-white/10 rounded-xl px-4 py-3 text-white text-lg focus:border-blue-500 transition"
+                       onkeypress="if(event.key === 'Enter') document.getElementById('loginPassword').focus()">
+                       
+                <input type="password" id="loginPassword" placeholder="Mot de passe" 
+                       class="w-full bg-[#151515] border border-white/10 rounded-xl px-4 py-3 text-white text-lg focus:border-blue-500 transition"
+                       onkeypress="if(event.key === 'Enter') attemptLogin()">
+            </div>
+            
+            <button onclick="attemptLogin()" class="w-full mt-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition shadow-lg shadow-blue-900/40">
+                Connexion
+            </button>
+            <p id="loginError" class="text-red-500 text-xs mt-3 invisible">Identifiant ou mot de passe incorrect.</p>
+        </div>
+    </div>
 
     <script>
 
@@ -1788,6 +1832,33 @@
 
 const defaultConfig = { color: 'gray', icon: 'fa-book-medical', gradient: 'from-gray-700 to-gray-900' };
         const availableAvatars = ['fa-dragon', 'fa-cat', 'fa-dog', 'fa-crow', 'fa-otter', 'fa-fish', 'fa-spider', 'fa-horse', 'fa-frog', 'fa-dove'];
+        
+         // --- Login Functions --
+function attemptLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorEl = document.getElementById('loginError');
+
+    errorEl.classList.add('invisible');
+
+    if (!email || !password) {
+        errorEl.innerText = "Veuillez entrer l'identifiant et le mot de passe.";
+        errorEl.classList.remove('invisible');
+        return;
+    }
+
+    // Utilisation de Firebase pour la connexion
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            // Connexion réussie, onAuthStateChanged va lancer completeInitialization
+        })
+        .catch((error) => {
+            // Échec de la connexion
+            errorEl.innerText = "Connexion échouée. Identifiant ou mot de passe incorrect.";
+            errorEl.classList.remove('invisible');
+            console.error("Firebase Login Error:", error);
+        });
+}
 
         // --- TOAST SYSTEM (DÉSACTIVÉ) ---
         function showToast(message, type = 'info') {
@@ -1817,77 +1888,102 @@ const defaultConfig = { color: 'gray', icon: 'fa-book-medical', gradient: 'from-
             }
         });
 
-
         // --- INIT & PERSISTENCE ---
 
+// DANS initApp()
 function initApp() {
-    // 1. Afficher la date du jour
+    // 0. CHECK AUTHENTIFICATION FIREBASE
+    // Le script s'arrête ici si l'utilisateur n'est pas authentifié
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            // L'utilisateur est connecté, on retire l'overlay
+            document.getElementById('loginOverlay').classList.add('hidden');
+            
+            // Lancement du corps principal
+            completeInitialization(user.uid); 
+            
+        } else {
+            // L'utilisateur n'est PAS connecté, on montre l'écran de login
+            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('loginOverlay').classList.add('opacity-100');
+            document.getElementById('loginEmail').focus();
+        }
+    });
+}
+
+// NOUVELLE FONCTION : Contient le corps de l'ancienne initApp, adapté au Cloud
+async function completeInitialization(userId) {
+    
+    // --- 1. CHARGEMENT DES DONNÉES DEPUIS FIRESTORE ---
+    const userDocRef = db.collection('users').doc(userId);
+    let loadedData = {};
+
+    try {
+        const doc = await userDocRef.get();
+        if (doc.exists) {
+            loadedData = doc.data().userData || {};
+        } else {
+            // Première connexion : on crée un document vide
+            await userDocRef.set({ userData: { profileCreated: true } });
+        }
+    } catch (error) {
+        console.error("Erreur de chargement des données Cloud:", error);
+    }
+
+    // --- 2. MISE À JOUR DES VARIABLES GLOBALES (ADAPTÉES AU CLOUD) ---
+    // Les anciennes lignes de sauvegarde seront maintenant chargées depuis loadedData
+
+    // 1. Afficher la date du jour (Reste local)
     const options = { weekday: 'long', day: 'numeric', month: 'long' };
     const dateElement = document.getElementById('dateToday');
     if(dateElement) dateElement.innerText = new Date().toLocaleDateString('fr-FR', options);
     
-    // 2. Charger le profil & Historique & XP
+    // 2. Charger le profil (Doit être adapté pour lire du Cloud ou de la mémoire)
+    // NOTE : Le chargement du profil (userName, Avatar, etc.) doit être adapté pour lire depuis loadedData.
+    // Cependant, pour l'instant, nous allons conserver loadProfile() et updateGreetingDisplay()
+    // et nous chargerons les données spécifiques ici.
+
     loadProfile();
     updateGreetingDisplay();
 
     // Historique Calendrier
-    const savedHistory = localStorage.getItem('ultimed_history');
-    if(savedHistory) userHistory = JSON.parse(savedHistory);
-
-    const savedPlanning = localStorage.getItem('ultimed_planning');
-    if(savedPlanning) userPlanning = JSON.parse(savedPlanning);
+    userHistory = loadedData.history || {};
+    userPlanning = loadedData.planning || {};
 
     // XP & Niveau
-    const savedXP = localStorage.getItem('ultimed_xp');
-    if(savedXP) {
-        userXP = parseInt(savedXP);
-        userLevel = Math.floor(userXP / 1000); 
-    }
+    userXP = loadedData.xp || 0;
+    userLevel = Math.floor(userXP / 1000); 
     if(typeof updateXPDisplay === 'function') updateXPDisplay();
     
     // Liens Perso
-    const savedLinks = localStorage.getItem('ultimed_custom_links');
-    if(savedLinks) userLinks = JSON.parse(savedLinks);
+    userLinks = loadedData.custom_links || [];
     if(typeof renderHeaderLinks === 'function') renderHeaderLinks();
 
     // 3. Charger les Données Principales (Statuts, Vues, Todos)
-    const savedRes = localStorage.getItem('ultimed_resources');
-    if(savedRes) userResources = JSON.parse(savedRes);
-    
-    const savedStatus = localStorage.getItem('ultimed_status');
-    if(savedStatus) userStatus = JSON.parse(savedStatus);
-    
-    const savedTodos = localStorage.getItem('ultimed_todos');
-    if(savedTodos) userTodos = JSON.parse(savedTodos);
-    
-    const savedVues = localStorage.getItem('ultimed_vues');
-    if(savedVues) userVues = JSON.parse(savedVues);
+    userResources = loadedData.resources || [];
+    userStatus = loadedData.status || {};
+    userTodos = loadedData.todos || [];
+    userVues = loadedData.vues || {};
 
-    // --- AJOUT : CHARGEMENT DES NOTES & DIFFICULTÉS & ERREURS ---
-    const savedItemNotes = localStorage.getItem('ultimed_item_notes');
-    if(savedItemNotes) userItemNotes = JSON.parse(savedItemNotes);
-
-    const savedDifficulty = localStorage.getItem('ultimed_item_difficulty');
-    if(savedDifficulty) userItemDifficulty = JSON.parse(savedDifficulty);
-
-    const savedErrors = localStorage.getItem('ultimed_item_errors');
-    if(savedErrors) userItemErrors = JSON.parse(savedErrors);
-
-    const savedClaimed = localStorage.getItem('ultimed_xp_claimed');
-if(savedClaimed) userXPClaimed = JSON.parse(savedClaimed);
+    // Notes, Difficultés, Erreurs
+    userItemNotes = loadedData.item_notes || {};
+    userItemDifficulty = loadedData.item_difficulty || {};
+    userItemErrors = loadedData.item_errors || {};
+    userXPClaimed = loadedData.xp_claimed || {};
 
     loadDailySuggestionState();
     initNotes(); // Notes globales (Tableau de bord)
     
     // 4. Initialiser le Compte à Rebours
-    const savedDate = localStorage.getItem('ultimed_examDate');
+    const savedDate = loadedData.examDate;
     if(savedDate) {
         updateCountdownDisplay(savedDate);
         const settingDateInput = document.getElementById('settingDate');
         if(settingDateInput) settingDateInput.value = savedDate;
     }
     
-    // 5. Initialiser la Clé API
+    // 5. Initialiser la Clé API (Reste en localStorage ou dans un champ de loadedData)
+    // NOTE: L'API Key est mieux conservée en local. On ne la synchronise pas.
     const savedKey = localStorage.getItem('ultimed_apiKey');
     if(savedKey) {
         userApiKey = savedKey;
@@ -1895,7 +1991,7 @@ if(savedClaimed) userXPClaimed = JSON.parse(savedClaimed);
         if(settingKeyInput) settingKeyInput.value = savedKey;
     }
     
-    // 6. Events Recherche & Notes Globales
+    // 6. Events Recherche & Notes Globales (PAS DE CHANGEMENT)
     const searchInput = document.getElementById('searchInput');
     if(searchInput) searchInput.addEventListener('input', render);
 
@@ -1906,7 +2002,7 @@ if(savedClaimed) userXPClaimed = JSON.parse(savedClaimed);
         });
     }
 
-    // 7. Gestion de la barre de recherche ToDo
+    // 7. Gestion de la barre de recherche ToDo (PAS DE CHANGEMENT)
     const todoInput = document.getElementById('todoInput');
     const autoList = document.getElementById('autocompleteList');
     
@@ -1936,14 +2032,14 @@ if(savedClaimed) userXPClaimed = JSON.parse(savedClaimed);
         });
     }
     
-    // 8. Lancer l'affichage
+    // 8. Lancer l'affichage principal (C'est ça qui affiche les cours !)
     buildCourses();
     populateFilters();
     updateStats();
     render();
     renderTodos();
 
-    // 8b. Gestion de la recherche Calendrier (Nouveau)
+    // 8b. Gestion de la recherche Calendrier (PAS DE CHANGEMENT)
     const calInput = document.getElementById('calendarSearchInput');
     const calList = document.getElementById('calendarAutocompleteList');
     
@@ -2089,19 +2185,34 @@ function loadProfile() {
             }
         }
 
-        function saveData() {
-            localStorage.setItem('ultimed_resources', JSON.stringify(userResources));
-            localStorage.setItem('ultimed_status', JSON.stringify(userStatus));
-            localStorage.setItem('ultimed_todos', JSON.stringify(userTodos));
-            localStorage.setItem('ultimed_vues', JSON.stringify(userVues));
-	    localStorage.setItem('ultimed_xp', userXP);
-	    localStorage.setItem('ultimed_item_notes', JSON.stringify(userItemNotes));
-	    localStorage.setItem('ultimed_item_errors', JSON.stringify(userItemErrors));
-   	    localStorage.setItem('ultimed_item_difficulty', JSON.stringify(userItemDifficulty));
-	    localStorage.setItem('ultimed_planning', JSON.stringify(userPlanning));
-	    localStorage.setItem('ultimed_xp_claimed', JSON.stringify(userXPClaimed));
-            updateStats(); 
-        }
+        // La fonction de sauvegarde est modifiée pour utiliser Firestore
+async function saveData() {
+    const user = auth.currentUser;
+    if (!user) return; // Sécurité
+
+    // 1. Consolidation de TOUTES les données globales
+    const dataToSave = {
+        resources: userResources,
+        status: userStatus,
+        todos: userTodos,
+        vues: userVues,
+        xp: userXP,
+        history: userHistory,
+        planning: userPlanning,
+        // ... (Ajoutez toutes vos autres variables persistantes ici, ex: userItemNotes, userItemDifficulty)
+    };
+
+    // 2. Écriture dans Firestore
+    try {
+        await db.collection('users').doc(user.uid).update({ userData: dataToSave });
+        updateStats(); // Mise à jour des stats locales
+        //showToast("Synchronisation Cloud OK.", 'info');
+    } catch (error) {
+        // En cas d'échec (ex: problème réseau), on avertit l'utilisateur
+        console.error("Échec de la synchronisation Cloud:", error);
+        // showToast("Échec de la synchronisation Cloud.", 'error');
+    }
+}
 
         // --- NOTES LOGIC ---
         function initNotes() {
@@ -2627,7 +2738,6 @@ playSound('click');
      dinoIcon.className = `fa-solid ${userAvatar} text-6xl text-gray-500 transition-colors duration-300`;
      dinoZzz.classList.remove('hidden');
 }
-
 
         function updateTimerDisplay() {
     const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
@@ -3865,7 +3975,6 @@ function toggleSoundPreview(checkbox) {
             }
         }
 
-
 function startTutorial() {
     const driver = window.driver.js.driver;
     
@@ -4724,7 +4833,6 @@ function startRevisionChat(item, title) {
             return id;
         }
 
-
         // --- FONCTIONS DE PARTAGE (EXPORT/IMPORT) ---
 
         function exportData() {
@@ -4778,7 +4886,6 @@ function executeImport(contentStr) {
         console.error(err);
     }
 }
-
 
 // --- MODIFICATION DE importData ---
 function importData(inputElement) {
