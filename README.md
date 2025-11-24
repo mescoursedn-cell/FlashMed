@@ -1,2 +1,2 @@
-# FlashMed
+# Ultimed
 Medical Studying Site
