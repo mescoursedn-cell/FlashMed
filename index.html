@@ -268,71 +268,82 @@
             filter: drop-shadow(0 0 20px rgba(34, 211, 238, 0.6));
         }
 
-/* --- CUSTOM DRIVER.JS THEME (Glassmorphism) --- */
-        
-        /* La bulle principale */
-        .driver-popover {
-            background-color: rgba(15, 15, 15, 0.85) !important; /* Fond noir transparent */
-            backdrop-filter: blur(20px) !important; /* L'effet de flou "Verre" */
-            border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Bordure subtile */
-            color: white !important;
-            border-radius: 24px !important; /* Coins bien arrondis */
-            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05) !important;
-            padding: 20px !important;
-            min-width: 300px !important;
-        }
+/* --- CUSTOM DRIVER.JS THEME (Ultimate Cockpit Style) --- */
 
-        /* Le Titre */
-        .driver-popover-title {
-            font-family: 'Montserrat', sans-serif !important;
-            font-size: 18px !important;
-            font-weight: 900 !important;
-            color: #fbbf24 !important; /* Gold (comme votre thème) */
-            margin-bottom: 8px !important;
-            letter-spacing: 0.05em !important;
-            text-transform: uppercase !important;
-        }
+/* 1. La Bulle Principale */
+.driver-popover {
+    background-color: rgba(10, 10, 12, 0.95) !important; /* Noir profond quasi opaque */
+    backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(251, 191, 36, 0.3) !important; /* Bordure Dorée subtile */
+    box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(251,191,36,0.05) !important;
+    color: #e5e7eb !important;
+    border-radius: 20px !important;
+    padding: 24px !important;
+    min-width: 320px !important;
+    max-width: 400px !important;
+}
 
-        /* Le Texte */
-        .driver-popover-description {
-            font-family: 'Inter', sans-serif !important;
-            color: #e5e7eb !important; /* Gris clair lisible */
-            font-size: 14px !important;
-            line-height: 1.6 !important;
-            font-weight: 400 !important;
-        }
+/* 2. Le Titre */
+.driver-popover-title {
+    font-family: 'Montserrat', sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #fbbf24 !important; /* Jaune Or */
+    margin-bottom: 12px !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-        /* Les Boutons (Suivant / Précédent) */
-        .driver-popover-footer button {
-            background-color: rgba(255, 255, 255, 0.1) !important;
-            color: white !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            border-radius: 12px !important;
-            text-shadow: none !important;
-            font-weight: bold !important;
-            font-size: 12px !important;
-            padding: 8px 16px !important;
-            transition: all 0.3s ease !important;
-        }
+/* 3. Le Texte */
+.driver-popover-description {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #d1d5db !important; /* Gris clair */
+    font-weight: 400 !important;
+}
 
-        .driver-popover-footer button:hover {
-            background-color: rgba(255, 255, 255, 0.2) !important;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        
-        /* Bouton "Terminé" en bleu */
-        .driver-popover-done-btn {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-            border: none !important;
-        }
+/* 4. Les Boutons (Navigation) */
+.driver-popover-footer {
+    margin-top: 20px !important;
+}
 
-        /* La petite flèche (Triangle) pour qu'elle se fonde dans le décor */
-        .driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: rgba(15, 15, 15, 0.9) !important; }
-        .driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: rgba(15, 15, 15, 0.9) !important; }
-        .driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: rgba(15, 15, 15, 0.9) !important; }
-        .driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: rgba(15, 15, 15, 0.9) !important; }
+.driver-popover-footer button {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+    text-shadow: none !important;
+    font-weight: bold !important;
+    font-size: 11px !important;
+    padding: 8px 16px !important;
+    transition: all 0.3s ease !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
 
+.driver-popover-footer button:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+/* Le bouton "Terminé" ou "Suivant" en mode Action */
+.driver-popover-next-btn {
+    background: linear-gradient(135deg, #d97706 0%, #fbbf24 100%) !important;
+    color: black !important;
+    border: none !important;
+    font-weight: 900 !important;
+}
+
+/* 5. La Flèche (Triangle) */
+.driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: rgba(10, 10, 12, 0.95) !important; }
+.driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: rgba(10, 10, 12, 0.95) !important; }
+.driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: rgba(10, 10, 12, 0.95) !important; }
+.driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: rgba(10, 10, 12, 0.95) !important; }
 
 
 /* --- CSS GLASSMORPHISM & LUEUR INTERNE --- */
@@ -649,55 +660,59 @@ input[type=range]::-webkit-slider-runnable-track {
     </div>
     
     <div class="absolute top-4 right-4 z-30 flex flex-col items-end">
-    <button onclick="toggleGoalPanel()" id="goalDisplayBtn" class="group relative flex items-center gap-2 bg-black/40 border border-white/10 rounded-xl px-3 py-1.5 hover:border-blue-500/50 hover:bg-blue-500/10 transition-all duration-300">
-        <div class="flex flex-col items-end">
-            <span class="text-[9px] font-bold text-gray-500 uppercase tracking-widest group-hover:text-blue-400 transition">Cible</span>
-            <span id="goalValueDisplay" class="text-sm font-mono font-bold text-white">Libre</span>
-        </div>
-        <div class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 group-hover:text-blue-400 group-hover:scale-110 transition">
-            <i class="fa-solid fa-crosshairs"></i>
-        </div>
+    
+    <button onclick="toggleGoalPanel()" id="goalDisplayBtn" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/50 transition-all shadow-lg group active:scale-95" title="Définir un objectif">
+        <i class="fa-solid fa-crosshairs group-hover:rotate-90 transition-transform duration-500"></i>
+        <span id="goalValueDisplay" class="hidden">Libre</span>
     </button>
 
-    <div id="goalControlPanel" class="absolute top-full right-0 mt-2 w-72 bg-[#151515] border border-white/10 rounded-2xl p-4 shadow-2xl backdrop-blur-xl opacity-0 invisible transform -translate-y-2 transition-all duration-300 origin-top-right z-50">
+    <div id="goalControlPanel" class="absolute top-full right-0 mt-3 w-84 bg-[#121212] border border-white/10 rounded-2xl p-5 shadow-2xl backdrop-blur-xl opacity-0 invisible transform -translate-y-2 transition-all duration-300 origin-top-right z-50">
         
-        <div class="flex justify-between items-center mb-4">
-            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Définir Durée (Minutes)</h4>
-            <button onclick="toggleGoalPanel()" class="text-gray-500 hover:text-white"><i class="fa-solid fa-times"></i></button>
+        <div class="flex justify-between items-center mb-6">
+            <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                <i class="fa-solid fa-hourglass-start text-blue-500"></i> Durée cible
+            </h4>
+            <button onclick="toggleGoalPanel()" class="w-6 h-6 rounded-full hover:bg-white/10 flex items-center justify-center text-gray-600 hover:text-white transition"><i class="fa-solid fa-times text-xs"></i></button>
         </div>
 
-        <div class="mb-5 px-1">
-            <div class="flex items-center gap-3 mb-2">
+        <div class="mb-6">
+            
+            <div class="flex items-center gap-3">
                 <input type="range" id="goalSlider" min="0" max="720" step="15" value="0" 
                        oninput="updateGoalFromInput(this.value)" 
-                       class="flex-grow h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all">
+                       class="flex-grow h-1.5 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 transition-all block">
                 
-                <input type="number" id="goalInputManual" placeholder="Min" 
-                       oninput="updateGoalFromInput(this.value)"
-                       class="w-16 bg-[#222] border border-white/10 rounded-lg py-1 px-2 text-right text-white text-xs font-mono font-bold focus:border-blue-500 focus:outline-none">
+                <input type="text" id="goalInputManual" readonly value="Libre"
+                       class="w-28 bg-black/20 border border-white/5 rounded-lg py-1.5 px-0 text-center text-blue-400 text-xs font-bold tracking-tighter focus:outline-none cursor-default flex-shrink-0">
             </div>
 
-            <div class="flex justify-between text-[9px] text-gray-500 font-mono">
-                <span>0</span>
-                <span>6h</span>
-                <span>12h+</span>
+            <div class="flex items-center gap-3 mt-2">
+                <div class="flex-grow flex justify-between text-[9px] text-gray-600 font-mono uppercase tracking-wider px-0.5">
+                    <span>0h</span>
+                    <span>6h</span>
+                    <span>12h</span>
+                </div>
+                <div class="w-28 flex-shrink-0"></div>
             </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-2">
-            <button onclick="setPresetGoal(25)" class="py-2 rounded-lg border border-white/5 bg-white/5 hover:bg-blue-500/20 hover:border-blue-500/30 text-xs font-bold text-gray-300 hover:text-white transition">
-                25m <span class="block text-[8px] opacity-50 font-normal">Pomodoro</span>
+        <div class="grid grid-cols-3 gap-2 mb-4">
+            <button onclick="setPresetGoal(25)" class="py-2 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-blue-500/10 hover:border-blue-500/30 text-gray-400 hover:text-white transition flex flex-col items-center gap-0.5 group">
+                <span class="text-sm font-bold group-hover:text-blue-400 transition-colors">25</span>
+                <span class="text-[8px] uppercase tracking-wider opacity-50">Pomo</span>
             </button>
-            <button onclick="setPresetGoal(60)" class="py-2 rounded-lg border border-white/5 bg-white/5 hover:bg-blue-500/20 hover:border-blue-500/30 text-xs font-bold text-gray-300 hover:text-white transition">
-                1h <span class="block text-[8px] opacity-50 font-normal">Session</span>
+            <button onclick="setPresetGoal(60)" class="py-2 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-blue-500/10 hover:border-blue-500/30 text-gray-400 hover:text-white transition flex flex-col items-center gap-0.5 group">
+                <span class="text-sm font-bold group-hover:text-blue-400 transition-colors">1h</span>
+                <span class="text-[8px] uppercase tracking-wider opacity-50">Session</span>
             </button>
-            <button onclick="setPresetGoal(120)" class="py-2 rounded-lg border border-white/5 bg-white/5 hover:bg-purple-500/20 hover:border-purple-500/30 text-xs font-bold text-gray-300 hover:text-white transition">
-                2h <span class="block text-[8px] opacity-50 font-normal">Focus</span>
+            <button onclick="setPresetGoal(120)" class="py-2 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-purple-500/10 hover:border-purple-500/30 text-gray-400 hover:text-white transition flex flex-col items-center gap-0.5 group">
+                <span class="text-sm font-bold group-hover:text-purple-400 transition-colors">2h</span>
+                <span class="text-[8px] uppercase tracking-wider opacity-50">Deep</span>
             </button>
         </div>
         
-        <button onclick="setPresetGoal(0)" class="w-full mt-3 py-1.5 text-[10px] text-gray-500 hover:text-red-400 transition border-t border-white/5">
-            Désactiver l'objectif
+        <button onclick="setPresetGoal(0)" class="w-full py-2 text-[10px] font-bold text-gray-600 hover:text-red-400 transition uppercase tracking-widest hover:bg-red-500/5 rounded-lg">
+            Désactiver
         </button>
     </div>
 </div>
@@ -851,10 +866,48 @@ input[type=range]::-webkit-slider-runnable-track {
             </div>
         </section>
 
-        <div id="subjectHeader" class="hidden mb-10 text-center relative transition-all duration-500">
-            <div id="subjectIconContainer" class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 mb-4 border border-white/10 transition-all duration-500"><i id="subjectIcon" class="fa-solid fa-heart-pulse text-2xl text-white"></i></div>
-            <h2 id="subjectTitle" class="text-3xl md:text-4xl font-display font-black text-white tracking-tight mb-2">Matière</h2><p class="text-gray-400 text-xs uppercase tracking-widest font-bold">Vue détaillée</p>
+        <div id="subjectHeader" class="relative h-56 w-full max-w-6xl mx-auto z-30 mb-4 flex items-center justify-center">
+    
+    <div id="staticHeaderContent" onclick="toggleSubjectCarousel()" class="cursor-pointer group transition-all duration-300 z-20 hover:scale-105 flex items-center justify-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gap-4">
+        
+        <i class="fa-solid fa-chevron-left text-xl text-white/10 transition-all duration-300 group-hover:text-white/40 group-hover:-translate-x-2"></i>
+
+        <div class="flex flex-col items-center justify-center w-48">
+            <div id="subjectIconContainer" class="w-20 h-20 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl backdrop-blur-xl transition-all duration-500 group-hover:border-white/30 group-hover:bg-white/10 mb-4">
+                <i id="subjectIcon" class="fa-solid fa-book-medical text-3xl text-gray-400 transition-all duration-500 group-hover:text-white group-hover:rotate-12"></i>
+            </div>
+            
+            <div class="text-center w-max">
+                <h2 id="subjectTitle" class="text-3xl font-display font-black text-white uppercase tracking-tight drop-shadow-2xl leading-none mb-2 transition-all">Programme R2C</h2>
+                <div class="text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em] group-hover:text-blue-400 transition-colors bg-black/30 px-3 py-1 rounded-full border border-white/5 inline-block">
+                    Ouvrir le menu
+                </div>
+            </div>
         </div>
+
+        <i class="fa-solid fa-chevron-right text-xl text-white/10 transition-all duration-300 group-hover:text-white/40 group-hover:translate-x-2"></i>
+
+    </div>
+
+    <div id="subjectCarouselContainer" 
+         class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-screen h-64 flex items-center justify-center opacity-0 pointer-events-none scale-100 transition-all duration-300 z-50"
+         style="-webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);">
+        
+        <div class="w-full h-full overflow-x-auto hide-scrollbar flex items-center snap-x snap-mandatory py-10" id="scrollContainer">
+            <div class="flex gap-8 px-[calc(50vw-6rem)] min-w-max items-center h-full" id="subjectCarouselTrack">
+                </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    /* Masque pour fondre les bords du carrousel */
+    .mask-linear-sides {
+        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+</style>
 
         <div class="sticky top-24 z-40 mb-8" id="filterBar">
     <div class="bg-[#151515]/60 backdrop-blur-xl p-1.5 rounded-full border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] flex items-center max-w-3xl mx-auto transition-all hover:border-white/20 hover:bg-[#151515]/80">
@@ -1167,6 +1220,31 @@ input[type=range]::-webkit-slider-runnable-track {
 
                 </section>
 
+<div class="mt-6 pt-6 border-t border-white/5">
+    <h3 class="text-xs font-bold text-green-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved"></i> Sécurité
+    </h3>
+    
+    <div class="bg-[#151515] p-5 rounded-xl border border-white/5 space-y-4">
+        <div>
+            <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Nouveau mot de passe</label>
+            <div class="relative">
+                <input type="password" id="settingNewPassword" placeholder="6 caractères minimum" 
+                       class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-green-500 transition text-sm">
+                <i class="fa-solid fa-lock absolute right-4 top-3.5 text-gray-600"></i>
+            </div>
+        </div>
+        
+        <button onclick="updateUserPassword()" class="w-full py-2 rounded-lg bg-green-500/10 border border-green-500/30 text-green-400 font-bold text-xs hover:bg-green-500 hover:text-white transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-rotate"></i> Mettre à jour le mot de passe
+        </button>
+        
+        <p class="text-[9px] text-gray-600 italic text-center">
+            Par sécurité, une reconnexion récente peut être requise.
+        </p>
+    </div>
+</div>
+
                 <div class="h-px w-full bg-white/5"></div>
 
                 <section>
@@ -1417,7 +1495,9 @@ input[type=range]::-webkit-slider-runnable-track {
 	<<div id="subjectBurstOverlay" class="fixed inset-0 z-[200] flex items-center justify-center pointer-events-none hidden overflow-hidden">
     <div id="subjectBurstCircle" class="rounded-full absolute"></div>
     <i id="subjectBurstIcon" class="relative z-10 text-[50vmin] opacity-0 transform transition-all"></i>
-</div> <div id="loginOverlay" class="fixed inset-0 z-[9999] bg-[#050505] flex items-center justify-center transition-opacity duration-500 opacity-100">
+</div> 
+
+<div id="loginOverlay" class="fixed inset-0 z-[9999] bg-[#050505] flex items-center justify-center transition-opacity duration-500 opacity-100">
 
     <div class="relative w-full max-w-md p-1">
         <div class="absolute inset-0 bg-blue-600/20 blur-[60px] rounded-full pointer-events-none"></div>
@@ -1436,14 +1516,21 @@ input[type=range]::-webkit-slider-runnable-track {
                     <i class="fa-solid fa-envelope absolute left-4 top-4 text-gray-500 group-focus-within:text-blue-400 transition-colors"></i>
                     <input type="email" id="loginEmail" placeholder="Email" 
                            class="w-full bg-[#151515] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition outline-none"
-                           onkeypress="if(event.key === 'Enter') document.getElementById('loginPassword').focus()">
+                           onkeydown="if(event.key === 'Enter') document.getElementById('loginPassword').focus()">
                 </div>
                        
-                <div class="group relative">
-                    <i class="fa-solid fa-lock absolute left-4 top-4 text-gray-500 group-focus-within:text-blue-400 transition-colors"></i>
-                    <input type="password" id="loginPassword" placeholder="Mot de passe" 
-                           class="w-full bg-[#151515] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition outline-none"
-                           onkeypress="if(event.key === 'Enter') handleAuthAction()">
+                <div>
+                    <div class="group relative">
+                        <i class="fa-solid fa-lock absolute left-4 top-4 text-gray-500 group-focus-within:text-blue-400 transition-colors"></i>
+                        <input type="password" id="loginPassword" placeholder="Mot de passe" 
+                               class="w-full bg-[#151515] border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition outline-none"
+                               onkeydown="if(event.key === 'Enter') handleAuthAction()">
+                    </div>
+                    <div class="flex justify-end mt-2">
+                        <button onclick="resetPasswordProcess()" class="text-[10px] font-bold text-gray-500 hover:text-blue-400 transition-colors">
+                            Mot de passe oublié ?
+                        </button>
+                    </div>
                 </div>
             </div>
             
@@ -1944,7 +2031,6 @@ input[type=range]::-webkit-slider-runnable-track {
             'Thérapeutique': { color: 'cyan', icon: 'fa-pills', gradient: 'from-cyan-400 to-blue-500' },
             'Médecine Générale': { color: 'blue', icon: 'fa-stethoscope', gradient: 'from-blue-500 to-indigo-600' },
             'Vasculaire': { color: 'red', icon: 'fa-road', gradient: 'from-red-500 to-red-700' },
-            'Anesthésie-Réa': { color: 'sky', icon: 'fa-syringe', gradient: 'from-sky-600 to-blue-700' }
         };
 
 const defaultConfig = { color: 'gray', icon: 'fa-book-medical', gradient: 'from-gray-700 to-gray-900' };
@@ -2054,6 +2140,45 @@ function getFirebaseErrorMessage(code) {
         case 'auth/weak-password': return "Le mot de passe doit faire 6 caractères min.";
         default: return "Erreur d'authentification.";
     }
+}
+
+function resetPasswordProcess() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const errorBox = document.getElementById('authError');
+    const btn = event.target; // Le bouton cliqué
+
+    // 1. Vérification
+    if (!email) {
+        showAuthError("Veuillez d'abord entrer votre email dans le champ ci-dessus.");
+        // Petit focus visuel sur le champ email
+        const emailInput = document.getElementById('loginEmail');
+        emailInput.focus();
+        emailInput.classList.add('border-red-500');
+        setTimeout(() => emailInput.classList.remove('border-red-500'), 2000);
+        return;
+    }
+
+    // 2. Envoi Firebase
+    const oldText = btn.innerText;
+    btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Envoi...';
+
+    auth.sendPasswordResetEmail(email)
+        .then(() => {
+            btn.innerText = oldText;
+            if(errorBox) errorBox.classList.add('hidden');
+            alert("📧 Email envoyé à " + email + ".\nVérifiez vos spams (et attendez quelques minutes) !");
+        })
+        .catch((error) => {
+            btn.innerText = oldText;
+            console.error(error);
+            if (error.code === 'auth/user-not-found') {
+                showAuthError("Aucun compte ne correspond à cet email.");
+            } else if (error.code === 'auth/invalid-email') {
+                showAuthError("L'adresse email est mal formatée.");
+            } else {
+                showAuthError("Erreur : " + error.message);
+            }
+        });
 }
 
 // --- Fonction pour forcer le démarrage sans Firebase ---
@@ -2247,6 +2372,8 @@ async function completeInitialization(userId) {
     // On cache le chargement
     const overlay = document.getElementById('loginOverlay');
     if(overlay) overlay.classList.add('hidden');
+
+    initSubjectCarousel();
 }
 
 // Petite fonction utilitaire requise
@@ -2664,6 +2791,41 @@ async function saveData() {
             closeGlobalSettings();
         }
 
+// --- CHANGEMENT DE MOT DE PASSE ---
+function updateUserPassword() {
+    const newPass = document.getElementById('settingNewPassword').value;
+    const user = auth.currentUser;
+
+    // Vérifications de base
+    if (!user) {
+        showToast("Vous devez être connecté.", "error");
+        return;
+    }
+    
+    if (!newPass || newPass.length < 6) {
+        showToast("Le mot de passe doit contenir au moins 6 caractères.", "error");
+        playSound('error');
+        return;
+    }
+
+    // Mise à jour via Firebase
+    // Note : Firebase demande une "connexion récente" pour cette action sensible.
+    user.updatePassword(newPass).then(() => {
+        // Succès
+        playSound('success');
+        showToast("Mot de passe modifié avec succès !", "success");
+        document.getElementById('settingNewPassword').value = ""; // Vider le champ
+    }).catch((error) => {
+        // Gestion des erreurs
+        playSound('error');
+        if (error.code === 'auth/requires-recent-login') {
+            showToast("Par sécurité, veuillez vous déconnecter et vous reconnecter avant de changer le mot de passe.", "error");
+        } else {
+            showToast("Erreur : " + error.message, "error");
+        }
+    });
+}
+
         function updateGreetingDisplay() {
     const hour = new Date().getHours();
     const greeting = hour >= 18 || hour < 5 ? "Bonsoir" : "Bonjour";
@@ -2766,48 +2928,50 @@ document.addEventListener('click', (e) => {
 
 // 2. Mise à jour via le Slider
 function updateGoalFromInput(minutes) {
-    const mins = parseInt(minutes) || 0; // Si vide, 0
+    const mins = parseInt(minutes) || 0;
     
-    // On synchronise les deux affichages
+    // 1. Mise à jour du Slider
     const slider = document.getElementById('goalSlider');
-    const manual = document.getElementById('goalInputManual');
-    
-    // Si on change l'un, l'autre suit (si dans la plage du slider)
-    if (slider && parseInt(slider.value) !== mins && mins <= 720) slider.value = mins;
-    if (manual && manual.value != mins) manual.value = mins;
+    if (slider) slider.value = mins;
 
+    // 2. Mise à jour de l'affichage texte
+    const manual = document.getElementById('goalInputManual');
+    if (manual) {
+        // J'ai ajouté 'tracking-tighter' dans les deux cas
+        if (mins === 0) {
+            manual.value = "Libre";
+            manual.className = "w-28 bg-black/20 border border-white/5 rounded-lg py-1.5 px-0 text-center text-gray-500 text-xs font-bold tracking-tighter focus:outline-none cursor-default flex-shrink-0";
+        } else {
+            const h = Math.floor(mins / 60);
+            const m = mins % 60;
+            manual.value = `${h} h ${m.toString().padStart(2, '0')} min`;
+            manual.className = "w-28 bg-black/20 border border-white/5 rounded-lg py-1.5 px-0 text-center text-blue-400 text-xs font-bold tracking-tighter focus:outline-none cursor-default flex-shrink-0";
+        }
+    }
+
+    // 3. Application de l'objectif
     applyGoal(mins);
 }
 
-// 3. Mise à jour via les Presets
 function setPresetGoal(minutes) {
-    // Mettre à jour le slider et l'input manuel
-    const slider = document.getElementById('goalSlider');
-    const manual = document.getElementById('goalInputManual');
+    // On utilise la fonction principale pour tout mettre à jour d'un coup
+    updateGoalFromInput(minutes);
     
-    if(slider) slider.value = minutes;
-    if(manual) manual.value = minutes;
-    
-    applyGoal(minutes);
-    
-    // Fermer le panneau après un clic sur un preset
+    // Fermer le panneau après un clic sur un preset (sauf désactiver)
     if (minutes > 0) setTimeout(toggleGoalPanel, 300);
 }
 
 // 4. Fonction centrale d'application
 function applyGoal(minutes) {
-    const displayEl = document.getElementById('goalValueDisplay');
+    // On récupère les éléments, mais on ne touchera pas à displayEl pour le texte
     const msg = document.getElementById('timerMessage');
     const barContainer = document.getElementById('timerProgressBarContainer');
 
     if (minutes <= 0) {
         // Désactivation
         timerTargetSeconds = 0;
-        if(displayEl) {
-            displayEl.innerText = "Libre";
-            displayEl.className = "text-sm font-mono font-bold text-gray-400";
-        }
         
+        // On cache juste la barre de progression et le message du bas
         if(barContainer) barContainer.classList.add('hidden');
         if(msg) msg.style.opacity = '0';
         
@@ -2815,24 +2979,10 @@ function applyGoal(minutes) {
         // Activation
         timerTargetSeconds = minutes * 60;
         
-        // Formatage joli (ex: 1h 30m)
-        let label = "";
-        const h = Math.floor(minutes / 60);
-        const m = minutes % 60;
+        // ON NE MODIFIE PLUS L'AFFICHAGE DU BOUTON ICI
+        // Le texte "Libre" ou la durée restera caché par la classe "hidden" du HTML
         
-        if (h > 0) label += `${h}h`;
-        if (m > 0 || h === 0) label += `${m > 0 ? (h > 0 ? ' ' : '') + m + 'm' : ''}`;
-        
-        if(displayEl) {
-            displayEl.innerText = label;
-            
-            // Couleur dynamique selon l'intensité
-            if (minutes >= 120) displayEl.className = "text-sm font-mono font-bold text-purple-400 drop-shadow-[0_0_5px_rgba(192,38,211,0.5)]";
-            else if (minutes >= 60) displayEl.className = "text-sm font-mono font-bold text-blue-400";
-            else displayEl.className = "text-sm font-mono font-bold text-white";
-        }
-
-        // Mise à jour UI Timer existante
+        // On met à jour uniquement la barre de progression et le message sous le timer
         updateTimerUI(timerTargetSeconds);
     }
 }
@@ -3844,11 +3994,13 @@ function showCelebrationSuggestions() {
                      class="card-cinema rounded-2xl flex flex-col ${statusClass} h-full relative group overflow-hidden cursor-pointer hover:border-white/20 transition-colors">
                     
                     <div class="absolute top-3 left-3 z-20 flex items-center gap-2">
-                        <div class="w-8 h-8 rounded-full bg-${style.color}-500/20 flex items-center justify-center border border-${style.color}-500/30 shadow-lg">
-                            <i class="fa-solid ${style.icon} text-${style.color}-400 text-xs"></i>
-                        </div>
-                        <span class="text-[10px] font-black bg-black/50 border border-white/10 px-2 py-1 rounded-full text-white backdrop-blur-md">ITEM ${c.item}</span>
-                    </div>
+    <div onclick="event.stopPropagation(); jumpToMatiere('${c.matiere}')" 
+         class="w-8 h-8 rounded-full bg-${style.color}-500/20 flex items-center justify-center border border-${style.color}-500/30 shadow-lg cursor-pointer hover:scale-110 hover:bg-${style.color}-500/40 transition-all duration-300 group/icon"
+         title="Filtrer : ${c.matiere}">
+        <i class="fa-solid ${style.icon} text-${style.color}-400 text-xs group-hover/icon:text-white transition-colors"></i>
+    </div>
+    <span class="text-[10px] font-black bg-black/50 border border-white/10 px-2 py-1 rounded-full text-white backdrop-blur-md">ITEM ${c.item}</span>
+</div>
                     
                     <div class="absolute top-3 right-3 z-20 flex gap-2">
                         <button onclick="toggleStatus('${c.id}', 'lu')" class="w-8 h-8 rounded-full border ${isLu ? 'bg-green-500 border-green-500 text-black' : 'border-white/10 text-gray-600 hover:text-green-500'} flex items-center justify-center backdrop-blur-md transition"><i class="fa-solid fa-check text-xs"></i></button>
@@ -3946,6 +4098,84 @@ function render() {
         }
 
         // --- UTILS ---
+
+// --- LOGIQUE CARROUSEL IMMERSIF ---
+
+// 1. Génération des cartes (Appelé au démarrage)
+function initSubjectCarousel() {
+    const track = document.getElementById('subjectCarouselTrack');
+    const matieres = Object.keys(matiereConfig).sort();
+    
+    // 1. Carte "TOUT"
+    // Changement : bg-[#111] -> bg-white/5 backdrop-blur-xl
+    let html = `
+        <div onclick="selectMatiereFromCarousel('all')" class="flex-shrink-0 w-24 h-32 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-white/10 hover:scale-105 hover:border-white/30 transition-all duration-300 group shadow-lg">
+            <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/20 transition">
+                <i class="fa-solid fa-globe text-gray-400 group-hover:text-white text-lg"></i>
+            </div>
+            <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider text-center group-hover:text-white">Tout</span>
+        </div>
+    `;
+
+    // 2. Les Matières
+    // Changement : bg-[#151515]/90 -> bg-white/5 backdrop-blur-xl
+    html += matieres.map(m => {
+        const conf = matiereConfig[m];
+        return `
+        <div onclick="selectMatiereFromCarousel('${m}')" class="flex-shrink-0 w-24 h-32 bg-white/5 backdrop-blur-xl border border-white/5 hover:border-${conf.color}-500/50 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.8)] group relative overflow-hidden">
+            
+            <div class="absolute inset-0 bg-gradient-to-b from-${conf.color}-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <i class="fa-solid ${conf.icon} text-2xl text-${conf.color}-500/70 group-hover:text-${conf.color}-400 transition-all duration-300 relative z-10 group-hover:scale-110"></i>
+            
+            <span class="text-[8px] font-bold text-gray-400 group-hover:text-white text-center px-1 leading-tight uppercase tracking-wide relative z-10 transition-colors">
+                ${m.replace('Médecine ', '').replace('Chirurgie ', '').substring(0, 12)}
+            </span>
+        </div>
+        `;
+    }).join('');
+
+    track.innerHTML = html;
+}
+
+// 2. Basculer entre Vue Statique et Vue Carrousel
+function toggleSubjectCarousel() {
+    const staticView = document.getElementById('staticHeaderContent');
+    const carouselContainer = document.getElementById('subjectCarouselContainer');
+    const track = document.getElementById('subjectCarouselTrack');
+    const backdrop = document.getElementById('carouselBackdrop');
+
+    // Génération si vide
+    if (track.children.length === 0) initSubjectCarousel();
+
+    const isOpen = !carouselContainer.classList.contains('pointer-events-none');
+
+    if (isOpen) {
+        // FERMETURE
+        carouselContainer.classList.add('opacity-0', 'pointer-events-none');
+        staticView.classList.remove('opacity-0', 'pointer-events-none', 'scale-90');
+        if(backdrop) backdrop.classList.add('opacity-0', 'pointer-events-none');
+    } else {
+        // OUVERTURE
+        staticView.classList.add('opacity-0', 'pointer-events-none', 'scale-90');
+        carouselContainer.classList.remove('opacity-0', 'pointer-events-none');
+        if(backdrop) backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        
+        playSound('whoosh');
+    }
+}
+
+// 3. Sélection et Fermeture
+function selectMatiereFromCarousel(matiere) {
+    toggleSubjectCarousel(); // Ferme le menu
+    
+    // Applique le filtre
+    const select = document.getElementById('matiereFilter');
+    select.value = matiere;
+    handleFilterChange(select);
+    
+    playSound('subjectClick');
+}
 
 // Fonction pour fermer la fiche d'item et revenir à la vue globale
 function closeItemDetailAndGoHome() {
@@ -4242,17 +4472,26 @@ function renderHeaderLinks() {
     const container = document.getElementById('customLinksContainer');
     if (!container) return;
     
-    container.innerHTML = userLinks.map((link, index) => `
+    // Palette de couleurs qui va tourner
+    const colors = ['blue', 'emerald', 'purple', 'amber', 'pink', 'cyan', 'rose', 'indigo'];
+
+    container.innerHTML = userLinks.map((link, index) => {
+        // On choisit la couleur en fonction de l'index (modulo pour boucler)
+        const c = colors[index % colors.length];
+
+        return `
         <div class="relative group">
-            <a href="${link.url}" target="_blank" onclick="playSound('click')" class="flex items-center gap-2 bg-blue-900/20 px-3 py-1.5 rounded-lg border border-blue-500/20 hover:bg-blue-900/40 hover:border-blue-500/40 transition" title="${link.name}">
-                <i class="fa-solid fa-globe text-blue-400 group-hover:text-blue-300 text-xs"></i>
-                <span class="text-xs font-bold text-blue-100/80 group-hover:text-white uppercase max-w-[100px] truncate">${link.name}</span>
+            <a href="${link.url}" target="_blank" onclick="playSound('click')" 
+               class="flex items-center gap-2 bg-${c}-900/20 px-3 py-1.5 rounded-lg border border-${c}-500/20 hover:bg-${c}-900/40 hover:border-${c}-500/40 transition" 
+               title="${link.name}">
+                <i class="fa-solid fa-globe text-${c}-400 group-hover:text-${c}-300 text-xs"></i>
+                <span class="text-xs font-bold text-${c}-100/80 group-hover:text-white uppercase max-w-[100px] truncate">${link.name}</span>
             </a>
             <button onclick="deleteLink(${index})" class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-md hover:scale-110">
                 <i class="fa-solid fa-times"></i>
             </button>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 function toggleSoundPreview(checkbox) {
@@ -4277,15 +4516,37 @@ function startTutorial() {
     
     const driverObj = driver({
         showProgress: true,
-        nextBtnText: 'Suivant ->',
-        prevBtnText: '<- Retour',
+        animate: true,
+        allowClose: true,
+        // Boutons simplifiés pour éviter les bugs d'affichage d'icônes dans les boutons
+        nextBtnText: 'Suivant',
+        prevBtnText: 'Retour',
         doneBtnText: 'C\'est parti !',
+        
+        // --- C'EST ICI QUE LA CORRECTION SE FAIT ---
+        // Cette fonction s'exécute à chaque étape pour injecter l'icône proprement
+        onPopoverRendered: (popover, { state }) => {
+            const step = state.activeStep;
+            // Si l'étape a une icône définie
+            if (step && step.popover && step.popover.icon) {
+                const titleEl = popover.wrapper.querySelector('.driver-popover-title');
+                
+                // On vérifie si l'icône n'est pas déjà là (pour éviter les doublons)
+                if (titleEl && !titleEl.querySelector('i')) {
+                    // On crée l'icône et on l'insère au début du titre
+                    const iconHtml = `<i class="${step.popover.icon}" style="margin-right: 12px;"></i>`;
+                    titleEl.insertAdjacentHTML('afterbegin', iconHtml);
+                }
+            }
+        },
+
         steps: [
             { 
                 element: '#greetingDisplay', 
                 popover: { 
-                    title: 'Bienvenue sur ultimed', 
-                    description: 'Votre cockpit ultime pour réussir l\'EDN/R2C. Laissez-moi vous faire visiter.', 
+                    title: 'Bienvenue Docteur', // Titre propre (sans HTML)
+                    icon: 'fa-solid fa-hand-sparkles', // L'icône est définie ici
+                    description: 'Voici <b>Ultimed</b>, votre cockpit de guerre pour la R2C. Oubliez les fichiers Excel. Ici, on optimise votre temps de cerveau disponible.', 
                     side: "bottom", 
                     align: 'start' 
                 } 
@@ -4293,8 +4554,9 @@ function startTutorial() {
             { 
                 element: '#xpDisplay', 
                 popover: { 
-                    title: 'Système d\'XP', 
-                    description: 'Gagnez de l\'expérience à chaque action : lecture, maîtrise, ou validation d\'objectifs. Montez de niveau pour rester motivé !', 
+                    title: 'Gamification R2C', 
+                    icon: 'fa-solid fa-chart-line',
+                    description: 'La médecine est un marathon. <br><br>Gagnez de l\'<b>XP</b> à chaque item lu ou maîtrisé. Montez de niveau pour débloquer des avatars exclusifs.', 
                     side: "left", 
                     align: 'start' 
                 } 
@@ -4303,7 +4565,8 @@ function startTutorial() {
                 element: '#dinoWrapper', 
                 popover: { 
                     title: 'Mode Focus', 
-                    description: 'Cliquez sur le Dragon pour de l\'encourouragement le bouton Play pour lancer le chrono. Des sons et animations vous accompagneront.', 
+                    icon: 'fa-solid fa-stopwatch',
+                    description: 'Cliquez sur <b>Play</b> pour lancer un chronomètre de travail. <br><br>Le Dragon veille : il vous encouragera lors de vos pauses.', 
                     side: "right", 
                     align: 'center' 
                 } 
@@ -4311,34 +4574,37 @@ function startTutorial() {
             { 
                 element: '#todoInput', 
                 popover: { 
-                    title: 'Objectifs du Jour', 
-                    description: 'Tapez ici vos priorités (ex: "Item 234"). Cochez-les une fois terminées pour gagner de l\'XP.', 
+                    title: 'Objectifs Tactiques', 
+                    icon: 'fa-solid fa-bullseye',
+                    description: 'Ne commencez pas sans plan. <br>Tapez ici vos priorités (ex: "Item 154") pour créer une liste d\'attaque immédiate.', 
                     side: "top", 
                     align: 'start' 
-                } 
-            },
-            { 
-                element: '#filterBar', 
-                popover: { 
-                    title: 'Recherche & Filtres', 
-                    description: 'Trouvez n\'importe quel cours instantanément. Filtrez par matière via l\'icône à droite.', 
-                    side: "bottom", 
-                    align: 'center' 
                 } 
             },
             { 
                 element: '#coursesGrid', 
                 popover: { 
-                    title: 'Vos Cours', 
-                    description: 'Ici s\'affichent les items. Utilisez les boutons pour ajouter des liens (Vidéo, PDF, Audio) ou valider votre avancement (Lu / Maîtrisé).', 
+                    title: 'Vos Items', 
+                    icon: 'fa-solid fa-layer-group',
+                    description: 'Le cœur du réacteur.<br><br>✅ <b>Coche :</b> Marquer comme "Lu".<br>🏆 <b>Trophée :</b> Marquer comme "Maîtrisé".<br>📂 <b>Clic :</b> Ouvrir la fiche détaillée.', 
                     side: "top", 
-                    align: 'start' 
+                    align: 'center' 
+                } 
+            },
+            { 
+                element: '#filterBar', 
+                popover: { 
+                    title: 'Navigation Rapide', 
+                    icon: 'fa-solid fa-filter',
+                    description: 'Un trou de mémoire ? Utilisez la barre de recherche pour retrouver un cours instantanément, ou filtrez par matière via l\'icône.', 
+                    side: "bottom", 
+                    align: 'center' 
                 } 
             }
         ],
         onDestroyStarted: () => {
-            // Si l'utilisateur ferme le tuto, on considère qu'il l'a vu
             localStorage.setItem('ultimed_tutorial_seen', 'true');
+            playSound('success'); 
             driverObj.destroy();
         },
     });
@@ -5566,6 +5832,13 @@ function openItemDetail(itemId) {
     if (matIcon && matText) {
         matIcon.className = `fa-solid ${config.icon} text-${config.color}-400 text-sm`;
         matText.className = `text-xs font-bold uppercase tracking-[0.15em] text-${config.color}-400`;
+
+const badge = document.getElementById('detailMatiereBadge');
+        if(badge) {
+            badge.className = "flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity p-1 rounded-lg hover:bg-white/5";
+            badge.onclick = () => jumpToMatiere(item.m);
+            badge.title = "Voir tous les cours de " + item.m;
+        }
     }
     
     // 4. Remplissage des Stats (Vues & Statut)
@@ -5738,6 +6011,24 @@ function updateDetailStatusUI(itemId) {
         text.innerText = "Non lu";
         text.className = "text-sm font-bold text-gray-500";
     }
+}
+
+// --- FONCTION DE NAVIGATION RAPIDE PAR MATIÈRE ---
+function jumpToMatiere(matiere) {
+    // 1. Si on est dans le détail, on le ferme
+    document.getElementById('itemDetailView').classList.add('hidden');
+    document.getElementById('dashboardView').classList.remove('hidden');
+    document.getElementById('filterBar').classList.remove('hidden');
+    
+    // 2. On vide la recherche textuelle pour ne voir QUE la matière
+    document.getElementById('searchInput').value = '';
+
+    // 3. On lance le filtre
+    filterByMatiere(matiere);
+    
+    // 4. Petit son et scroll
+    playSound('whoosh');
+    window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 initApp();
