@@ -541,7 +541,7 @@ input[type=range]::-webkit-slider-runnable-track {
 .transition-flash {
     position: fixed;
     inset: 0;
-    z-index: 10000; /* Au-dessus de TOUT (même le login) */
+    z-index: 200000; /* Au-dessus de TOUT (même le login) */
     pointer-events: none;
     animation: flashBurst 1.5s ease-out forwards;
     mix-blend-mode: screen; /* Mode de fusion pour un effet "lumière" */
@@ -572,6 +572,21 @@ input[type=range]::-webkit-slider-runnable-track {
 
 
 <body class="min-h-screen flex flex-col text-gray-100 font-sans">
+
+<div id="appLoader" class="fixed inset-0 z-[100000] bg-[#050505] flex flex-col items-center justify-center transition-opacity duration-700">
+    <div class="relative">
+        <div class="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse"></div>
+        <i class="fa-solid fa-dragon text-6xl text-blue-500 relative z-10 animate-bounce"></i>
+    </div>
+    <div class="mt-6 flex flex-col items-center gap-2">
+        <h1 class="text-2xl font-display font-black text-white tracking-[0.5em] uppercase">Ultimed</h1>
+        <div class="flex gap-1">
+            <div class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
+            <div class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+            <div class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+        </div>
+    </div>
+</div>
 
     <div class="depth-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
     <div id="matiereGlowOverlay" class="fixed inset-0 z-[-1] transition-opacity duration-700 opacity-0 pointer-events-none"></div>
@@ -2363,6 +2378,7 @@ function closeConfirmModal() {
 function initApp() {
     const overlay = document.getElementById('loginOverlay');
     const dashboard = document.getElementById('dashboardView'); 
+    const preloader = document.getElementById('appLoader'); 
 
     if (typeof auth === 'undefined') {
         console.error("Erreur: Firebase n'est pas chargé.");
@@ -2373,51 +2389,60 @@ function initApp() {
         if (user) {
             console.log("Utilisateur reconnu :", user.email);
             
-            // --- SÉQUENCE CINÉMATIQUE (AVEC FLASH) ---
-            
-            // 1. Son spatial
-            playSound('track4'); 
+            // 1. On cache le login (masqué par le preloader)
+            if(overlay) {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('opacity-100');
+            }
 
-            // 2. Création du Flash Lumineux
-            const flash = document.createElement('div');
-            flash.className = 'transition-flash';
-            document.body.appendChild(flash);
-            // Nettoyage du flash après l'animation
-            setTimeout(() => flash.remove(), 1500);
-
-            // 3. Explosion du Login (Disparition)
-            if(overlay) overlay.classList.add('login-explode');
-            
-            // 4. Apparition du Dashboard (En douceur)
+            // 2. On prépare le dashboard (Invisible pour l'instant)
             if(dashboard) {
                 dashboard.classList.remove('hidden');
-                dashboard.classList.add('cinematic-dashboard');
+                dashboard.classList.add('opacity-0');
+                dashboard.classList.remove('animate-fade-in-up');
             }
 
-            // 5. Nettoyage final du Login (0.8s plus tard)
-            setTimeout(() => {
-                if(overlay) {
-                    overlay.classList.add('hidden');
-                    overlay.classList.remove('login-explode'); 
-                }
-            }, 800);
-
-            // 6. Chargement des données
+            // 3. On charge les données
             completeInitialization(user.uid);
 
+            // 4. Lancement de la séquence (Après 500ms)
+            setTimeout(() => {
+                
+                // A. LE FLASH (Réintégré ici)
+                const flash = document.createElement('div');
+                flash.className = 'transition-flash';
+                document.body.appendChild(flash);
+                setTimeout(() => flash.remove(), 1500); // Nettoyage
+
+                // B. Le Dashboard apparaît
+                if(dashboard) {
+                    dashboard.classList.remove('opacity-0');
+                    dashboard.classList.add('cinematic-dashboard');
+                }
+
+                // C. Le Preloader disparaît (en fondu)
+                if (preloader && !preloader.classList.contains('pointer-events-none')) {
+                    preloader.classList.add('opacity-0', 'pointer-events-none');
+                    setTimeout(() => preloader.remove(), 800);
+                }
+                
+                // D. Son
+                playSound('track4'); 
+
+            }, 500); 
+
         } else {
+            // Mode Non Connecté
             console.log("Non connecté.");
-            
-            // Reset état initial
+            if (preloader) {
+                preloader.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => preloader.remove(), 800);
+            }
             if(overlay) {
-                overlay.classList.remove('hidden', 'login-explode', 'opacity-0');
-                overlay.style = ""; 
+                overlay.classList.remove('hidden', 'opacity-0');
+                overlay.classList.add('opacity-100');
             }
-            
-            if(dashboard) {
-                dashboard.classList.add('hidden');
-                dashboard.classList.remove('cinematic-dashboard');
-            }
+            if(dashboard) dashboard.classList.add('hidden');
         }
     });
 }
@@ -4874,8 +4899,8 @@ function startTutorial() {
             { 
                 element: '#greetingDisplay', 
                 popover: { 
-                    title: 'Bienvenue Docteur', // PAS DE HTML ICI ! Juste le texte.
-                    icon: 'fa-solid fa-hand-sparkles', // C'est cette ligne qui ajoute l'icône
+                    title: 'Bienvenue Docteur', // Titre propre (sans HTML)
+                    icon: 'fa-solid fa-hand-sparkles', // L'icône est définie ici
                     description: 'Voici <b>Ultimed</b>, votre cockpit de guerre pour la R2C. Oubliez les fichiers Excel. Ici, on optimise votre temps de cerveau disponible.', 
                     side: "bottom", 
                     align: 'start' 
@@ -4932,7 +4957,6 @@ function startTutorial() {
                 } 
             }
         ],
-
         onDestroyStarted: () => {
             localStorage.setItem('ultimed_tutorial_seen', 'true');
             playSound('success'); 
