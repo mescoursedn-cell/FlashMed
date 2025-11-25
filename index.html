@@ -493,33 +493,6 @@ input[type=range]::-webkit-slider-runnable-track {
             animation: iconZoomFade 0.7s ease-out forwards;
         }
 
-/* --- ANIMATION CINÉMATIQUE D'ENTRÉE --- */
-@keyframes dashboardEntry {
-    0% { 
-        opacity: 0;
-        transform: scale(0.95) translateY(20px);
-        filter: blur(10px);
-    }
-    100% { 
-        opacity: 1;
-        transform: scale(1) translateY(0);
-        filter: blur(0);
-    }
-}
-
-.cinematic-dashboard {
-    animation: dashboardEntry 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-/* Classe pour l'explosion du Login */
-.login-explode {
-    transition: all 0.8s cubic-bezier(0.7, 0, 0.3, 1);
-    transform: scale(1.2);
-    opacity: 0 !important;
-    filter: blur(20px);
-    pointer-events: none;
-}
-
 /* --- FLASH LUMINEUX COLORÉ --- */
 @keyframes flashBurst {
     0% { 
@@ -541,7 +514,7 @@ input[type=range]::-webkit-slider-runnable-track {
 .transition-flash {
     position: fixed;
     inset: 0;
-    z-index: 200000; /* Au-dessus de TOUT (même le login) */
+    z-index: 10000; /* Au-dessus de TOUT (même le login) */
     pointer-events: none;
     animation: flashBurst 1.5s ease-out forwards;
     mix-blend-mode: screen; /* Mode de fusion pour un effet "lumière" */
@@ -569,24 +542,7 @@ input[type=range]::-webkit-slider-runnable-track {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
 </head>
-
-
 <body class="min-h-screen flex flex-col text-gray-100 font-sans">
-
-<div id="appLoader" class="fixed inset-0 z-[100000] bg-[#050505] flex flex-col items-center justify-center transition-opacity duration-700">
-    <div class="relative">
-        <div class="absolute inset-0 bg-blue-500/20 blur-xl rounded-full animate-pulse"></div>
-        <i class="fa-solid fa-dragon text-6xl text-blue-500 relative z-10 animate-bounce"></i>
-    </div>
-    <div class="mt-6 flex flex-col items-center gap-2">
-        <h1 class="text-2xl font-display font-black text-white tracking-[0.5em] uppercase">Ultimed</h1>
-        <div class="flex gap-1">
-            <div class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
-            <div class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-            <div class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-        </div>
-    </div>
-</div>
 
     <div class="depth-bg"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
     <div id="matiereGlowOverlay" class="fixed inset-0 z-[-1] transition-opacity duration-700 opacity-0 pointer-events-none"></div>
@@ -1635,11 +1591,6 @@ input[type=range]::-webkit-slider-runnable-track {
         <i id="passwordToggleIcon" class="fa-solid fa-eye"></i>
     </button>
 </div>
-                    <div class="flex justify-end mt-2">
-                        <button onclick="resetPasswordProcess()" class="text-[10px] font-bold text-gray-500 hover:text-blue-400 transition-colors">
-                            Mot de passe oublié ?
-                        </button>
-                    </div>
                 </div>
             </div>
             
@@ -1720,7 +1671,7 @@ input[type=range]::-webkit-slider-runnable-track {
             "Données synchronisées."
         ];
 
-// --- SYSTEME SONORE ---
+/// --- SYSTEME SONORE ---
 	const audioSystem = {
     enabled: true,
     // On sépare la musique des bruitages pour gérer le volume séparément
@@ -1748,6 +1699,7 @@ input[type=range]::-webkit-slider-runnable-track {
         track4: new Audio('./sounds/Undertones/UT-01-Beginnings.mp3')
     }
 };
+
 
 // --- DATA (ITEMS R2C ENRICHIS) ---
 
@@ -2199,11 +2151,11 @@ function handleAuthAction() {
     btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
     btn.disabled = true;
 
-    // --- PLUS DE DEMANDE DE PLEIN ÉCRAN ICI ---
-
     if (isRegistering) {
+        // --- CRÉATION DE COMPTE ---
         auth.createUserWithEmailAndPassword(email, password)
             .then((userCredential) => {
+                // Succès : initApp gérera la suite via le listener
                 console.log("Compte créé :", userCredential.user.uid);
             })
             .catch((error) => {
@@ -2212,8 +2164,10 @@ function handleAuthAction() {
                 showAuthError(getFirebaseErrorMessage(error.code));
             });
     } else {
+        // --- CONNEXION ---
         auth.signInWithEmailAndPassword(email, password)
             .then((userCredential) => {
+                // Succès
                 console.log("Connecté :", userCredential.user.uid);
             })
             .catch((error) => {
@@ -2378,7 +2332,6 @@ function closeConfirmModal() {
 function initApp() {
     const overlay = document.getElementById('loginOverlay');
     const dashboard = document.getElementById('dashboardView'); 
-    const preloader = document.getElementById('appLoader'); 
 
     if (typeof auth === 'undefined') {
         console.error("Erreur: Firebase n'est pas chargé.");
@@ -2389,60 +2342,46 @@ function initApp() {
         if (user) {
             console.log("Utilisateur reconnu :", user.email);
             
-            // 1. On cache le login (masqué par le preloader)
-            if(overlay) {
-                overlay.classList.add('hidden');
-                overlay.classList.remove('opacity-100');
-            }
+            // --- SÉQUENCE CINÉMATIQUE (AVEC FLASH) ---
+            
+            // 1. Son spatial
+            playSound('chronoStart'); 
 
-            // 2. On prépare le dashboard (Invisible pour l'instant)
-            if(dashboard) {
-                dashboard.classList.remove('hidden');
-                dashboard.classList.add('opacity-0');
-                dashboard.classList.remove('animate-fade-in-up');
-            }
+            // 2. Création du Flash Lumineux
+            const flash = document.createElement('div');
+            flash.className = 'transition-flash';
+            document.body.appendChild(flash);
+            // Nettoyage du flash après l'animation
+            setTimeout(() => flash.remove(), 1500);
 
-            // 3. On charge les données
+            // 3. Explosion du Login (Disparition)
+            if(overlay) overlay.classList.add('login-explode');
+            
+
+            // 5. Nettoyage final du Login (0.8s plus tard)
+            setTimeout(() => {
+                if(overlay) {
+                    overlay.classList.add('hidden');
+                    overlay.classList.remove('login-explode'); 
+                }
+            }, 800);
+
+            // 6. Chargement des données
             completeInitialization(user.uid);
 
-            // 4. Lancement de la séquence (Après 500ms)
-            setTimeout(() => {
-                
-                // A. LE FLASH (Réintégré ici)
-                const flash = document.createElement('div');
-                flash.className = 'transition-flash';
-                document.body.appendChild(flash);
-                setTimeout(() => flash.remove(), 1500); // Nettoyage
-
-                // B. Le Dashboard apparaît
-                if(dashboard) {
-                    dashboard.classList.remove('opacity-0');
-                    dashboard.classList.add('cinematic-dashboard');
-                }
-
-                // C. Le Preloader disparaît (en fondu)
-                if (preloader && !preloader.classList.contains('pointer-events-none')) {
-                    preloader.classList.add('opacity-0', 'pointer-events-none');
-                    setTimeout(() => preloader.remove(), 800);
-                }
-                
-                // D. Son
-                playSound('track4'); 
-
-            }, 500); 
-
         } else {
-            // Mode Non Connecté
             console.log("Non connecté.");
-            if (preloader) {
-                preloader.classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => preloader.remove(), 800);
-            }
+            
+            // Reset état initial
             if(overlay) {
-                overlay.classList.remove('hidden', 'opacity-0');
-                overlay.classList.add('opacity-100');
+                overlay.classList.remove('hidden', 'login-explode', 'opacity-0');
+                overlay.style = ""; 
             }
-            if(dashboard) dashboard.classList.add('hidden');
+            
+            if(dashboard) {
+                dashboard.classList.add('hidden');
+                dashboard.classList.remove('cinematic-dashboard');
+            }
         }
     });
 }
@@ -2639,7 +2578,7 @@ function handleAutoSearch(e, listElement, type) {
                 icon.classList.add('animate-icon-burst');
                 
                 // Son
-                playSound('subjectClick'); 
+                playSound('whoosh'); 
 
                 // Nettoyage
                 setTimeout(() => {
@@ -3139,7 +3078,6 @@ document.addEventListener('click', (e) => {
 
 // 2. Mise à jour via le Slider
 function updateGoalFromInput(minutes) {
-
     const mins = parseInt(minutes) || 0;
     
     // 1. Mise à jour du Slider
@@ -3163,7 +3101,6 @@ function updateGoalFromInput(minutes) {
 
     // 3. Application de l'objectif
     applyGoal(mins);
-	playSound('click')
 }
 
 function setPresetGoal(minutes) {
@@ -4372,7 +4309,6 @@ function render() {
         }
 
         // --- UTILS ---
-
 // --- GESTION MUSIQUE D'AMBIANCE ---
 
 function initMusicPlayer() {
@@ -4502,7 +4438,7 @@ function toggleSubjectCarousel() {
         carouselContainer.classList.remove('opacity-0', 'pointer-events-none');
         if(backdrop) backdrop.classList.remove('opacity-0', 'pointer-events-none');
         
-        playSound('subjectClick');
+        playSound('whoosh');
     }
 }
 
@@ -4526,7 +4462,7 @@ function closeItemDetailAndGoHome() {
     // On appelle la fonction de nettoyage et de rendu
     resetView();      
     
-    playSound('subjectClick');
+    playSound('whoosh');
 }
 
 // --- JAUGE DE DIFFICULTÉ ---
@@ -6399,7 +6335,7 @@ function jumpToMatiere(matiere) {
     filterByMatiere(matiere);
     
     // 4. Petit son et scroll
-    playSound('subjectClick');
+    playSound('whoosh');
     window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
