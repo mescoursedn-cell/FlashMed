@@ -4874,8 +4874,8 @@ function startTutorial() {
             { 
                 element: '#greetingDisplay', 
                 popover: { 
-                    title: 'Bienvenue Docteur', // Titre propre (sans HTML)
-                    icon: 'fa-solid fa-hand-sparkles', // L'icône est définie ici
+                    title: 'Bienvenue Docteur', // PAS DE HTML ICI ! Juste le texte.
+                    icon: 'fa-solid fa-hand-sparkles', // C'est cette ligne qui ajoute l'icône
                     description: 'Voici <b>Ultimed</b>, votre cockpit de guerre pour la R2C. Oubliez les fichiers Excel. Ici, on optimise votre temps de cerveau disponible.', 
                     side: "bottom", 
                     align: 'start' 
@@ -4932,6 +4932,7 @@ function startTutorial() {
                 } 
             }
         ],
+
         onDestroyStarted: () => {
             localStorage.setItem('ultimed_tutorial_seen', 'true');
             playSound('success'); 
