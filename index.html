@@ -3114,6 +3114,7 @@ document.addEventListener('click', (e) => {
 
 // 2. Mise à jour via le Slider
 function updateGoalFromInput(minutes) {
+
     const mins = parseInt(minutes) || 0;
     
     // 1. Mise à jour du Slider
@@ -3137,6 +3138,7 @@ function updateGoalFromInput(minutes) {
 
     // 3. Application de l'objectif
     applyGoal(mins);
+	playSound('click')
 }
 
 function setPresetGoal(minutes) {
@@ -4183,45 +4185,47 @@ function showCelebrationSuggestions() {
     const isMaitrise = c.status === 'maitrise';
     const isLu = c.status === 'lu' || isMaitrise;
     
-    // Vérifier si l'item est DÉJÀ dans les objectifs pour changer la couleur du bouton
+    // Vérifier si l'item est DÉJÀ dans les objectifs
     const isInTodos = userTodos.some(t => t.linkedItemId === c.id && !t.done);
     const todoBtnClass = isInTodos 
-        ? "text-blue-400 border-blue-500/50 bg-blue-500/10" 
-        : "text-gray-600 border-white/10 hover:text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/50";
+        ? "text-blue-400 border-blue-500/50 bg-blue-500/10 shadow-[0_0_10px_rgba(59,130,246,0.3)]" 
+        : "text-gray-500 border-white/5 hover:text-blue-400 hover:bg-blue-500/10 hover:border-blue-500/50";
 
-    // --- COULEUR DU TITRE AU SURVOL ---
+    // Couleur du titre au survol
     let hoverTitleClass = 'group-hover:text-blue-400'; 
+    if (c.vues >= 10) hoverTitleClass = 'group-hover:text-fuchsia-400 group-hover:drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]'; 
+    else if (c.status === 'maitrise') hoverTitleClass = 'group-hover:text-yellow-400 group-hover:drop-shadow-[0_0_8px_rgba(250,204,21,0.6)]';
+    else if (c.status === 'lu') hoverTitleClass = 'group-hover:text-green-400 group-hover:drop-shadow-[0_0_8px_rgba(74,222,128,0.6)]';
 
-    if (c.vues >= 10) {
-        hoverTitleClass = 'group-hover:text-fuchsia-400 group-hover:drop-shadow-[0_0_8px_rgba(232,121,249,0.8)]'; 
-    } else if (c.status === 'maitrise') {
-        hoverTitleClass = 'group-hover:text-yellow-400 group-hover:drop-shadow-[0_0_8px_rgba(250,204,21,0.6)]';
-    } else if (c.status === 'lu') {
-        hoverTitleClass = 'group-hover:text-green-400 group-hover:drop-shadow-[0_0_8px_rgba(74,222,128,0.6)]';
-    }
-
+    // --- NOUVEAU DESIGN DES BOUTONS MÉDIAS ---
     const btn = (link, type, icon, color) => {
         if (link) {
+            // RESSOURCE DISPO : Bouton coloré avec lueur interne
             const activeIcon = type === 'video' ? 'fa-play' : 
                              type === 'audio' ? 'fa-music' : 
                              type === 'flash' ? 'fa-bolt' : 'fa-eye';
 
             return `<div class="relative group/btn">
-                <button onclick="trackResourceView('${c.id}', '${type}'); openPlayer('${link}', '${type}', '${c.title.replace(/'/g, "&apos;")}')" class="w-12 h-12 rounded-2xl border flex items-center justify-center transition transform active:scale-95 text-${color}-400 border-${color}-500/30 bg-${color}-500/10 hover:bg-${color}-500/20 shadow-lg backdrop-blur-sm" title="Lire ${type}">
-                    <i class="fa-solid ${activeIcon} text-lg"></i>
+                <button onclick="trackResourceView('${c.id}', '${type}'); openPlayer('${link}', '${type}', '${c.title.replace(/'/g, "&apos;")}')" 
+                        class="w-10 h-10 rounded-xl border flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95 text-${color}-400 border-${color}-500/30 bg-${color}-500/10 hover:bg-${color}-500/20 hover:shadow-[0_0_15px_rgba(var(--color-${color}-500),0.4)] backdrop-blur-md" 
+                        title="Lire ${type}">
+                    <i class="fa-solid ${activeIcon} text-sm filter drop-shadow-[0_0_3px_rgba(0,0,0,0.5)]"></i>
                 </button>
-                <button onclick="removeResource('${c.id}', '${type}')" class="absolute -top-2 -right-2 w-5 h-5 bg-red-600 text-white rounded-full text-[10px] flex items-center justify-center opacity-0 group-hover/btn:opacity-100 transition hover:bg-red-700 shadow-lg cursor-pointer z-10" title="Supprimer">
+                <button onclick="removeResource('${c.id}', '${type}')" class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white rounded-full text-[8px] flex items-center justify-center opacity-0 group-hover/btn:opacity-100 transition-all hover:scale-125 shadow-md cursor-pointer z-10">
                     <i class="fa-solid fa-times"></i>
                 </button>
             </div>`;
         } else {
-            return `<button onclick="openModalForItem('${c.id}', '${type}')" class="w-12 h-12 rounded-2xl border border-white/5 bg-black/20 text-gray-600 hover:text-gray-400 hover:border-white/10 flex items-center justify-center transition group/empty" title="Ajouter ${type}">
-                <i class="fa-solid ${icon} text-sm opacity-40 group-hover/empty:opacity-100 transition-opacity"></i>
+            // PAS DE RESSOURCE : Bouton fantôme discret
+            return `<button onclick="openModalForItem('${c.id}', '${type}')" 
+                            class="w-10 h-10 rounded-xl border border-white/5 bg-white/[0.02] text-gray-700 hover:text-gray-400 hover:border-white/10 hover:bg-white/5 flex items-center justify-center transition-all duration-300 group/empty" 
+                            title="Ajouter ${type}">
+                <i class="fa-solid ${icon} text-xs opacity-30 group-hover/empty:opacity-100 transition-opacity"></i>
             </button>`;
         }
     }
     
-    const tutorBtn = `<button onclick="startRevisionChat('${c.id}', '${c.title.replace(/'/g, "&apos;")}')" class="w-8 h-8 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-400 hover:text-white hover:bg-indigo-500/40 flex items-center justify-center transition shadow-[0_0_10px_rgba(99,102,241,0.2)]" title="Tuteur IA">
+    const tutorBtn = `<button onclick="startRevisionChat('${c.id}', '${c.title.replace(/'/g, "&apos;")}')" class="w-8 h-8 rounded-full border border-indigo-500/30 bg-indigo-500/5 text-indigo-400/70 hover:text-white hover:bg-indigo-500/40 flex items-center justify-center transition-all hover:scale-110 hover:shadow-[0_0_15px_rgba(99,102,241,0.3)]" title="Tuteur IA">
         <i class="fa-solid fa-brain text-[10px]"></i>
     </button>`;
 
@@ -4229,48 +4233,50 @@ function showCelebrationSuggestions() {
 
     return `
         <div onclick="if(!event.target.closest('button')) openItemDetail('${c.id}')" 
-             class="card-cinema rounded-2xl flex flex-col ${statusClass} h-full relative group overflow-hidden cursor-pointer hover:border-white/20 transition-colors">
+             class="card-cinema rounded-2xl flex flex-col ${statusClass} h-full relative group overflow-hidden cursor-pointer hover:border-white/20 transition-all duration-500 hover:shadow-2xl">
             
             <div class="absolute top-3 left-3 z-20 flex items-center gap-2">
                 <div onclick="event.stopPropagation(); jumpToMatiere('${c.matiere}')" 
-                     class="w-8 h-8 rounded-full bg-${style.color}-500/20 flex items-center justify-center border border-${style.color}-500/30 shadow-lg cursor-pointer hover:scale-110 hover:bg-${style.color}-500/40 transition-all duration-300 group/icon"
+                     class="w-8 h-8 rounded-full bg-${style.color}-500/10 flex items-center justify-center border border-${style.color}-500/20 shadow-lg cursor-pointer hover:scale-110 hover:bg-${style.color}-500/30 transition-all duration-300 group/icon backdrop-blur-sm"
                      title="Filtrer : ${c.matiere}">
                     <i class="fa-solid ${style.icon} text-${style.color}-400 text-xs group-hover/icon:text-white transition-colors"></i>
                 </div>
-                <span class="text-[10px] font-black bg-black/50 border border-white/10 px-2 py-1 rounded-full text-white backdrop-blur-md">ITEM ${c.item}</span>
+                <span class="text-[9px] font-black bg-black/40 border border-white/5 px-2 py-1 rounded-full text-gray-300 backdrop-blur-md">ITEM ${c.item}</span>
             </div>
             
-            <div class="absolute top-3 right-3 z-20 flex gap-2">
+            <div class="absolute top-3 right-3 z-20 flex gap-1.5">
                 <button onclick="event.stopPropagation(); addToTodos('${c.id}', '${c.title.replace(/'/g, "&apos;")}')" 
-                        class="w-8 h-8 rounded-full border ${todoBtnClass} flex items-center justify-center backdrop-blur-md transition group/cal" 
-                        title="${isInTodos ? 'Déjà planifié' : 'Ajouter aux objectifs du jour'}">
+                        class="w-8 h-8 rounded-full border ${todoBtnClass} flex items-center justify-center backdrop-blur-md transition-all duration-300 group/cal" 
+                        title="${isInTodos ? 'Déjà planifié' : 'Ajouter aux objectifs'}">
                     <i class="fa-solid ${isInTodos ? 'fa-calendar-check' : 'fa-calendar-plus'} text-xs group-hover/cal:scale-110 transition-transform"></i>
                 </button>
 
-                <button onclick="toggleStatus('${c.id}', 'lu')" class="w-8 h-8 rounded-full border ${isLu ? 'bg-green-500 border-green-500 text-black' : 'border-white/10 text-gray-600 hover:text-green-500'} flex items-center justify-center backdrop-blur-md transition"><i class="fa-solid fa-check text-xs"></i></button>
-                <button onclick="toggleStatus('${c.id}', 'maitrise')" class="w-8 h-8 rounded-full border ${isMaitrise ? 'bg-yellow-500 border-yellow-500 text-black' : 'border-white/10 text-gray-600 hover:text-yellow-500'} flex items-center justify-center backdrop-blur-md transition"><i class="fa-solid fa-trophy text-xs"></i></button>
+                <button onclick="toggleStatus('${c.id}', 'lu')" class="w-8 h-8 rounded-full border ${isLu ? 'bg-green-500 border-green-500 text-black shadow-[0_0_10px_rgba(34,197,94,0.4)]' : 'border-white/10 bg-black/20 text-gray-600 hover:text-green-400 hover:border-green-500/50'} flex items-center justify-center backdrop-blur-md transition-all duration-300"><i class="fa-solid fa-check text-xs"></i></button>
             </div>
 
             <div class="p-5 z-10 flex-grow pt-14 flex flex-col">
                 
-                <div class="mb-2 pr-2 min-h-[3rem] flex items-start">
-                <h3 class="text-white font-bold text-lg leading-tight line-clamp-2 ${hoverTitleClass} transition-colors duration-300">${titleContent}</h3>
+                <div class="mb-3 pr-2 min-h-[3.5rem] flex items-start">
+                    <h3 class="text-gray-200 font-bold text-lg leading-tight line-clamp-2 ${hoverTitleClass} transition-all duration-300 tracking-tight">${titleContent}</h3>
                 </div>
                 
-                <div class="mt-auto my-3">
-                    <div class="bg-black/40 border border-white/5 rounded-3xl py-3 px-4 flex justify-center items-center gap-5 backdrop-blur-sm shadow-inner">
+                <div class="mt-auto my-4">
+                    <div class="bg-white/[0.02] border border-white/5 rounded-2xl py-2 px-3 flex justify-between items-center backdrop-blur-sm hover:bg-white/[0.04] hover:border-white/10 transition-all duration-500 group/deck shadow-inner">
                         ${btn(c.videoLink, 'video', 'fa-video', 'red')}
+                        <div class="w-px h-4 bg-white/5"></div>
                         ${btn(c.audioLink, 'audio', 'fa-headphones', 'yellow')}
+                        <div class="w-px h-4 bg-white/5"></div>
                         ${btn(c.flashLink, 'flash', 'fa-bolt', 'purple')}
+                        <div class="w-px h-4 bg-white/5"></div>
                         ${btn(c.ficheLink, 'fiche', 'fa-file-pdf', 'blue')}
                     </div>
                 </div>
 
-                <div class="flex items-end justify-between gap-3 mt-3 border-t border-white/5 pt-2">
+                <div class="flex items-end justify-between gap-3 pt-2 border-t border-white/5">
                     <div class="flex-grow">
                         ${getVuesBarHTML(c.vues, c.id)}
                     </div>
-                    <div class="pb-1 pl-2 border-l border-white/5">
+                    <div class="pl-2 border-l border-white/5">
                         ${tutorBtn}
                     </div>
                 </div>
@@ -6263,38 +6269,54 @@ function renderDetailResources(itemId) {
 
     list.innerHTML = types.map(t => {
         const res = resources.find(r => r.type === t.id);
+        
         if (res) {
-            // CAS 1 : RESSOURCE DÉJÀ LÀ (On garde le style "Plein" mais plus léger)
+            // --- RESSOURCE DISPONIBLE (STYLE CAPSULE ACTIVE) ---
             return `
-            <div class="flex items-center gap-2 group">
+            <div class="flex items-stretch gap-3 group animate-fade-in-up">
                 <button onclick="trackResourceView('${itemId}', '${t.id}'); openPlayer('${res.link}', '${t.id}', '${document.getElementById('detailTitle').innerText.replace(/'/g, "&apos;")}')" 
-                        class="flex-grow bg-white/[0.03] backdrop-blur-md border border-white/10 hover:bg-${t.color}-500/10 hover:border-${t.color}-500/30 p-3 rounded-xl flex items-center justify-between transition-all duration-300 hover:shadow-[0_0_15px_-5px_rgba(255,255,255,0.1)]">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-${t.color}-500/10 flex items-center justify-center text-${t.color}-400 border border-${t.color}-500/20">
-                            <i class="fa-solid ${t.icon}"></i>
+                        class="flex-grow relative overflow-hidden bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-${t.color}-500/50 hover:bg-${t.color}-500/10 p-3 rounded-2xl flex items-center justify-between transition-all duration-300 group/btn hover:shadow-lg hover:shadow-${t.color}-900/20 text-left">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-r from-${t.color}-500/0 via-${t.color}-500/5 to-${t.color}-500/0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div class="w-12 h-12 rounded-xl bg-${t.color}-500/10 flex items-center justify-center text-${t.color}-400 border border-${t.color}-500/20 shadow-inner group-hover/btn:scale-110 transition-transform duration-300">
+                            <i class="fa-solid ${t.icon} text-xl drop-shadow-md"></i>
                         </div>
-                        <span class="text-sm text-gray-300 font-bold group-hover:text-white transition-colors">${t.label}</span>
+                        
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-200 font-bold group-hover/btn:text-white transition-colors">${t.label}</span>
+                            <span class="text-[10px] text-${t.color}-400/70 font-mono uppercase tracking-wider font-bold">Disponible</span>
+                        </div>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition">
-                        <i class="fa-solid fa-play text-xs text-gray-500 group-hover:text-white ml-0.5"></i>
+                    
+                    <div class="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-gray-400 group-hover/btn:bg-${t.color}-500 group-hover/btn:text-black group-hover/btn:border-${t.color}-400 transition-all duration-300 relative z-10 shadow-lg">
+                        <i class="fa-solid fa-play text-xs ml-0.5"></i>
                     </div>
                 </button>
                 
                 <button onclick="removeResource('${itemId}', '${t.id}')" 
-                        class="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/5 text-red-400 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-200 backdrop-blur-md flex items-center justify-center transition opacity-0 group-hover:opacity-100">
-                    <i class="fa-solid fa-trash text-xs"></i>
+                        class="w-14 rounded-2xl bg-white/[0.02] border border-white/5 text-gray-600 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 flex items-center justify-center transition-all duration-300"
+                        title="Supprimer la ressource">
+                    <i class="fa-solid fa-trash-can text-lg opacity-60 hover:opacity-100"></i>
                 </button>
             </div>`;
         } else {
-            // CAS 2 : AJOUTER (C'est ici qu'on rend le bouton très translucide)
-            // Modification : bg-white/[0.02] (2% d'opacité) au lieu de bg-white/5
+            // --- RESSOURCE MANQUANTE (STYLE FANTÔME) ---
             return `
             <button onclick="openModalForItem('${itemId}', '${t.id}')" 
-                    class="w-full bg-white/[0.02] backdrop-blur-sm border border-white/5 border-dashed p-3 rounded-xl flex items-center gap-3 text-gray-600 hover:text-white hover:bg-white/5 hover:border-white/20 transition-all duration-300 group">
-                <div class="w-8 h-8 rounded-lg bg-white/[0.02] flex items-center justify-center text-gray-700 group-hover:text-white transition">
-                    <i class="fa-solid ${t.icon} opacity-40 group-hover:opacity-100"></i>
+                    class="w-full bg-white/[0.01] border border-white/5 border-dashed p-3 rounded-2xl flex items-center justify-between text-gray-600 hover:text-gray-300 hover:bg-white/[0.03] hover:border-white/20 transition-all duration-300 group animate-fade-in-up">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-white/[0.02] flex items-center justify-center text-gray-700 border border-white/5 group-hover:border-white/10 group-hover:text-gray-500 transition-colors">
+                        <i class="fa-solid ${t.icon} text-xl"></i>
+                    </div>
+                    <div class="flex flex-col items-start">
+                        <span class="text-sm font-medium italic opacity-60 group-hover:opacity-100 transition-opacity">Ajouter ${t.label}...</span>
+                    </div>
                 </div>
-                <span class="text-xs italic font-medium">Ajouter ${t.label}...</span>
+                <div class="w-10 h-10 flex items-center justify-center opacity-30 group-hover:opacity-100 transition-opacity">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
             </button>`;
         }
     }).join('');
