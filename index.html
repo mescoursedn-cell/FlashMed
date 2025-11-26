@@ -629,20 +629,26 @@ input[type=range]::-webkit-slider-runnable-track {
     </button>
 
     <div id="musicMenuOptions" class="flex items-center gap-2 pr-2 pl-2 py-2 bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl transition-all duration-500 ease-out opacity-0 translate-x-10 pointer-events-none scale-95 origin-right">
-        
-        <button onclick="togglePlayPause()" id="miniPlayBtn" class="w-10 h-10 rounded-full bg-white text-black hover:bg-gray-200 flex items-center justify-center transition-all shadow-lg group/play">
-            <i id="miniPlayIcon" class="fa-solid fa-play text-xs ml-0.5"></i>
-        </button>
+    
+    <button onclick="togglePlayPause()" id="miniPlayBtn" class="w-10 h-10 rounded-full bg-black text-white hover:bg-purple-500 flex items-center justify-center transition-all shadow-lg group/play">
+        <i id="miniPlayIcon" class="fa-solid fa-play text-xs ml-0.5"></i>
+    </button>
 
-        <div class="w-px h-6 bg-white/10 mx-1"></div> <button onclick="setMusicTheme('theme1')" class="w-10 h-10 rounded-full bg-blue-900/20 border border-blue-500/30 text-blue-400 hover:text-white hover:bg-blue-600 hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] flex items-center justify-center transition-all group relative" title="Thème Focus">
-            <i class="fa-solid fa-wind text-xs"></i>
-        </button>
+    <div class="w-px h-6 bg-white/10 mx-1"></div>
 
-        <button onclick="setMusicTheme('theme2')" class="w-10 h-10 rounded-full bg-purple-900/20 border border-purple-500/30 text-purple-400 hover:text-white hover:bg-purple-600 hover:shadow-[0_0_15px_rgba(168,85,247,0.6)] flex items-center justify-center transition-all group relative" title="Thème Épique">
-            <i class="fa-solid fa-fire text-xs"></i>
-        </button>
+    <button onclick="setMusicTheme('theme1')" class="w-10 h-10 rounded-full bg-sky-400/10 border border-sky-400/30 text-sky-300 hover:text-white hover:bg-sky-500 hover:shadow-[0_0_15px_rgba(14,165,233,0.6)] flex items-center justify-center transition-all group relative" title="Thème Focus (Air)">
+        <i class="fa-solid fa-wind text-xs"></i>
+    </button>
 
-    </div>
+    <button onclick="setMusicTheme('theme3')" class="w-10 h-10 rounded-full bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 hover:text-white hover:bg-indigo-600 hover:shadow-[0_0_15px_rgba(79,70,229,0.6)] flex items-center justify-center transition-all group relative" title="Thème Drama">
+        <i class="fa-solid fa-masks-theater text-xs"></i>
+    </button>
+
+    <button onclick="setMusicTheme('theme2')" class="w-10 h-10 rounded-full bg-orange-500/10 border border-orange-500/30 text-orange-400 hover:text-white hover:bg-orange-500 hover:shadow-[0_0_15px_rgba(249,115,22,0.6)] flex items-center justify-center transition-all group relative" title="Thème Épique">
+        <i class="fa-solid fa-fire text-xs"></i>
+    </button>
+
+</div>
 
 </div>
 
@@ -1994,28 +2000,46 @@ const audioSystem = {
     // Lecteur standard (Thème 1)
     mainAudio: new Audio(),
     
-    // Lecteurs Superposés (Thème 2)
+    // Lecteurs Superposés (Thème 2 & 3)
     layer1: new Audio(),
     layer2: new Audio(),
-    layersFinished: 0, // Compteur pour la synchro
+    layer3: new Audio(), // Nouveau layer pour le trio
+    
+    layersFinished: 0,     // Combien ont fini ?
+    activeLayersCount: 0,  // Combien jouent actuellement ? (Variable dynamique)
 
     themes: {
-        theme1: [ // Séquentiel (Un par un)
+        theme1: [ // Séquentiel
             './sounds/Air/AR-01-Beginnings.mp3',
             './sounds/Melody/ML-01-Beginnings.mp3',
             './sounds/Strings/ST-01-Beginnings.mp3',
             './sounds/Undertones/UT-01-Beginnings.mp3'
         ],
-         theme2: [ // VOS 4 NOUVELLES MUSIQUES (Mettez ici vos noms de fichiers)
+        theme2: [ // Duo Aléatoire
             './sounds/Epic/Drive.mp3', 
             './sounds/Epic/Clean-Bass.mp3',
             './sounds/Epic/Keep-Moving.mp3',
             './sounds/Epic/Painful-Wait-A.mp3'
+        ],
+        theme3: [ // Trio Complexe (Structure Objet)
+            { // Mélodie 1 : Manifesto
+                ST: './sounds/Drama/STManifesto.mp3',
+                BP: './sounds/Drama/BPManifesto.mp3',
+                UT: './sounds/Drama/UTManifesto.mp3'
+            },
+            { // Mélodie 2 : Anthology
+                ST: './sounds/Drama/STAnthology.mp3',
+                BP: './sounds/Drama/BPAnthology.mp3',
+                UT: './sounds/Drama/UTAnthology.mp3'
+            },
+            { // Mélodie 3 : Premise
+                ST: './sounds/Drama/STPremise.mp3',
+                BP: './sounds/Drama/BPPremise.mp3',
+                UT: './sounds/Drama/UTPremise.mp3'
+            }
         ]
     },
     
-    // Vos bruitages (inchangés)
- 
     sounds: {
         success: new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3'),
         click: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'),
@@ -2026,12 +2050,9 @@ const audioSystem = {
         error: new Audio('https://assets.mixkit.co/active_storage/sfx/1110/1110-preview.mp3'),
         refresh: new Audio('https://assets.mixkit.co/active_storage/sfx/2043/2043-preview.mp3'),
         subjectClick: new Audio('https://assets.mixkit.co/active_storage/sfx/1120/1120-preview.mp3'),
-        creature: new Audio('https://assets.mixkit.co/active_storage/sfx/2350/2350-preview.mp3'),
-	track4: new Audio('./sounds/Undertones/UT-01-Beginnings.mp3')
-
+        creature: new Audio('https://assets.mixkit.co/active_storage/sfx/2350/2350-preview.mp3')
     }
 };
-
 
 // --- DATA (ITEMS R2C ENRICHIS) ---
 
@@ -4902,12 +4923,13 @@ function render() {
 
 // 1. Initialisation
 function initMusicPlayer() {
-    // Config Thème 1 (Séquentiel)
+    // Config Thème 1
     audioSystem.mainAudio.volume = audioSystem.musicVolume;
     audioSystem.mainAudio.addEventListener('ended', playNextTrackStandard);
 
-    // Config Thème 2 (Layers)
-    [audioSystem.layer1, audioSystem.layer2].forEach(layer => {
+    // Config Thèmes Layered (2 et 3)
+    // On ajoute le listener sur les 3 layers
+    [audioSystem.layer1, audioSystem.layer2, audioSystem.layer3].forEach(layer => {
         layer.volume = audioSystem.musicVolume;
         layer.addEventListener('ended', handleLayerEnded);
     });
@@ -4915,38 +4937,44 @@ function initMusicPlayer() {
     loadTheme('theme1');
 }
 
-// 2. Gestionnaire de fin de piste (Pour la synchro Thème 2)
+// 2. Gestionnaire de fin de piste (Cerveau de la synchro)
 function handleLayerEnded() {
     audioSystem.layersFinished++;
     
-    // On attend que les 2 soient finis pour relancer
-    if (audioSystem.layersFinished >= 2) {
-        playRandomLayeredTheme();
+    // Si toutes les couches actives sont finies, on relance
+    // Pour Thème 2 c'est toujours 2, pour Thème 3 ça varie (1, 2 ou 3)
+    if (audioSystem.layersFinished >= audioSystem.activeLayersCount) {
+        if (audioSystem.currentTheme === 'theme2') {
+            playRandomLayeredTheme2();
+        } else if (audioSystem.currentTheme === 'theme3') {
+            playDramaLogic();
+        }
     }
 }
 
 // 3. Charger un thème
 function loadTheme(themeName) {
-    stopAllMusic(); // On arrête tout avant de changer
+    stopAllMusic();
     audioSystem.currentTheme = themeName;
+    
+    // Pour theme3, la playlist est un tableau d'objets, pour les autres un tableau de strings
     audioSystem.playlist = audioSystem.themes[themeName] || audioSystem.themes['theme1'];
     
-    // Si on était en lecture, on relance immédiatement avec la nouvelle logique
     if (audioSystem.isPlaying) {
         startMusicLogic();
     }
 }
 
-// 4. Démarrer la musique selon le mode
+// 4. Démarrer la logique selon le thème
 function startMusicLogic() {
     audioSystem.isPlaying = true;
     
     if (audioSystem.currentTheme === 'theme1') {
-        // Mode Standard
         playTrackStandard(0);
-    } else {
-        // Mode Layered (Aléatoire)
-        playRandomLayeredTheme();
+    } else if (audioSystem.currentTheme === 'theme2') {
+        playRandomLayeredTheme2();
+    } else if (audioSystem.currentTheme === 'theme3') {
+        playDramaLogic();
     }
     updateMusicUI();
 }
@@ -4960,105 +4988,135 @@ function playTrackStandard(index) {
     audioSystem.mainAudio.src = audioSystem.playlist[index];
     audioSystem.mainAudio.play().catch(e => console.log("Autoplay bloqué", e));
 }
+function playNextTrackStandard() { playTrackStandard(currentStandardIndex + 1); }
 
-function playNextTrackStandard() {
-    playTrackStandard(currentStandardIndex + 1);
-}
-
-// 6. Logique Thème 2 (Aléatoire & Superposé)
-function playRandomLayeredTheme() {
+// 6. Logique Thème 2 (Duo Aléatoire)
+function playRandomLayeredTheme2() {
     const list = audioSystem.playlist;
-    if (list.length < 2) return; // Sécurité
-
-    // Reset du compteur de fin
     audioSystem.layersFinished = 0;
+    audioSystem.activeLayersCount = 2; // Toujours 2 pistes ici
 
-    // Choix de 2 index différents au hasard
     let idx1 = Math.floor(Math.random() * list.length);
     let idx2 = idx1;
-    while (idx2 === idx1) {
-        idx2 = Math.floor(Math.random() * list.length);
-    }
+    while (idx2 === idx1) idx2 = Math.floor(Math.random() * list.length);
 
-    // Chargement des sources
     audioSystem.layer1.src = list[idx1];
     audioSystem.layer2.src = list[idx2];
+    audioSystem.layer3.src = ""; // On vide le 3ème au cas où
 
-    // Lecture simultanée
-    // On ajoute un léger délai aléatoire sur la 2ème pour un effet plus naturel
     audioSystem.layer1.play().catch(e => {});
-    setTimeout(() => {
-        audioSystem.layer2.play().catch(e => {});
-    }, 500); // Décalage de 0.5s optionnel
+    setTimeout(() => { audioSystem.layer2.play().catch(e => {}); }, 500);
 }
 
-// 7. Stop Total (Helper)
-function stopAllMusic() {
-    // Stop Main
-    audioSystem.mainAudio.pause();
-    audioSystem.mainAudio.currentTime = 0;
+// 7. Logique Thème 3 (Drama - Trio Variable)
+function playDramaLogic() {
+    const melodies = audioSystem.playlist; // C'est le tableau d'objets {ST, BP, UT}
+    audioSystem.layersFinished = 0;
     
-    // Stop Layers
-    audioSystem.layer1.pause();
-    audioSystem.layer1.currentTime = 0;
-    audioSystem.layer2.pause();
-    audioSystem.layer2.currentTime = 0;
+    // A. Choisir une mélodie au hasard (Manifesto, Anthology ou Premise)
+    const randomMelodyIndex = Math.floor(Math.random() * melodies.length);
+    const selectedMelody = melodies[randomMelodyIndex]; // Ex: {ST:..., BP:..., UT:...}
+
+    // B. Choisir quelles variations jouer (1, 2 ou 3)
+    const types = ['ST', 'BP', 'UT'];
+    
+    // Mélanger le tableau types pour avoir un ordre aléatoire
+    // Algorithme de Fisher-Yates simplifié
+    for (let i = types.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [types[i], types[j]] = [types[j], types[i]];
+    }
+
+    // Décider combien de couches on joue (entre 1 et 3)
+    // Math.random() -> 0 à 0.99. 
+    // < 0.33 = 1 couche, < 0.66 = 2 couches, sinon 3 couches.
+    const rand = Math.random();
+    let countToPlay = 3;
+    if (rand < 0.33) countToPlay = 1;
+    else if (rand < 0.66) countToPlay = 2;
+
+    audioSystem.activeLayersCount = countToPlay;
+
+    // C. Assigner les sources
+    // On reset tout d'abord
+    audioSystem.layer1.src = "";
+    audioSystem.layer2.src = "";
+    audioSystem.layer3.src = "";
+
+    // On assigne en fonction du nombre choisi
+    // types[0] est le premier type pioché au hasard (ex: 'BP')
+    if (countToPlay >= 1) audioSystem.layer1.src = selectedMelody[types[0]];
+    if (countToPlay >= 2) audioSystem.layer2.src = selectedMelody[types[1]];
+    if (countToPlay >= 3) audioSystem.layer3.src = selectedMelody[types[2]];
+
+    // D. Lecture synchronisée (Tout en même temps pour que ça sonne bien)
+    if (audioSystem.layer1.src) audioSystem.layer1.play().catch(e => {});
+    if (audioSystem.layer2.src) audioSystem.layer2.play().catch(e => {});
+    if (audioSystem.layer3.src) audioSystem.layer3.play().catch(e => {});
+    
+    console.log(`Drama Mode: Playing Melody ${randomMelodyIndex} with ${countToPlay} layers (${types.slice(0, countToPlay).join('+')})`);
 }
 
-// 8. Play / Pause (Bouton)
+// 8. Stop Total
+function stopAllMusic() {
+    audioSystem.mainAudio.pause(); audioSystem.mainAudio.currentTime = 0;
+    audioSystem.layer1.pause(); audioSystem.layer1.currentTime = 0;
+    audioSystem.layer2.pause(); audioSystem.layer2.currentTime = 0;
+    audioSystem.layer3.pause(); audioSystem.layer3.currentTime = 0;
+}
+
+// 9. Play / Pause global
 function togglePlayPause() {
     if (audioSystem.isPlaying) {
         // PAUSE
         if (audioSystem.currentTheme === 'theme1') {
             audioSystem.mainAudio.pause();
         } else {
+            // Pause de tous les layers potentiels
             audioSystem.layer1.pause();
             audioSystem.layer2.pause();
+            audioSystem.layer3.pause();
         }
         audioSystem.isPlaying = false;
         showToast("Musique en pause", "info");
     } else {
-        // PLAY
-        // Si rien n'est chargé (src vide), on lance la logique de démarrage
-        const isMainReady = audioSystem.currentTheme === 'theme1' && audioSystem.mainAudio.src;
-        const isLayerReady = audioSystem.currentTheme === 'theme2' && audioSystem.layer1.src;
-
-        if (isMainReady) {
-            audioSystem.mainAudio.play();
-            audioSystem.isPlaying = true;
-        } else if (isLayerReady) {
-            audioSystem.layer1.play();
-            audioSystem.layer2.play();
-            audioSystem.isPlaying = true;
+        // PLAY / RESUME
+        if (audioSystem.currentTheme === 'theme1') {
+            if (!audioSystem.mainAudio.src) startMusicLogic();
+            else audioSystem.mainAudio.play();
         } else {
-            // Premier lancement
-            startMusicLogic();
+            // Pour les thèmes layered, on vérifie si layer1 a une source
+            if (!audioSystem.layer1.src) startMusicLogic();
+            else {
+                // On relance ce qui était chargé
+                if (audioSystem.layer1.src) audioSystem.layer1.play();
+                if (audioSystem.layer2.src) audioSystem.layer2.play();
+                if (audioSystem.layer3.src) audioSystem.layer3.play();
+            }
         }
+        audioSystem.isPlaying = true;
         showToast("Lecture en cours 🎵", "success");
     }
     updateMusicUI();
 }
 
-// 9. Changement de Thème (Interface)
+// 10. Changement de Thème
 function setMusicTheme(themeName) {
     if (audioSystem.currentTheme === themeName && audioSystem.isPlaying) {
         showToast("Ce thème joue déjà.", "info");
         return;
     }
-    
     loadTheme(themeName);
     
-    // Si on n'était pas en lecture, on lance
-    if (!audioSystem.isPlaying) {
-        startMusicLogic();
-    }
+    let nomTheme = 'Focus';
+    if (themeName === 'theme2') nomTheme = 'Épique';
+    if (themeName === 'theme3') nomTheme = 'Drama';
     
-    const nomTheme = themeName === 'theme1' ? 'Focus' : 'Épique';
     showToast(`Thème activé : ${nomTheme}`, "success");
     updateMusicUI();
 }
 
-// 10. UI & Menu (Inchangé mais nécessaire)
+// 11. UI (Menu)
 function toggleMusicMenu() {
     const menu = document.getElementById('musicMenuOptions');
     const mainBtn = document.getElementById('mainMusicBtn');
