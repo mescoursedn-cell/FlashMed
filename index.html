@@ -3538,22 +3538,43 @@ function showSessionReport(minutes, xp, bonus) {
 
         // --- TODO LOGIC ---
         function addTodo() {
-            const input = document.getElementById('todoInput');
-            const val = input.value.trim();
-            if(val) {
-                var foundId = null;
-                const match = val.match(/(\d+)/);
-                if (match) {
-                      const possibleId = match[1];
-                      if (rawItems.find(i => i.id === possibleId)) foundId = possibleId;
-                }
-                
-                userTodos.push({ text: val, done: false, id: Date.now(), linkedItemId: foundId });
-                input.value = '';
-                saveData();
-                renderTodos();
+    const input = document.getElementById('todoInput');
+    const val = input.value.trim();
+    if(val) {
+        var foundId = null;
+        // On essaie de trouver un ID dans le texte (ex: "Réviser le 154")
+        const match = val.match(/(\d+)/);
+        if (match) {
+              const possibleId = match[1];
+              // On vérifie que cet ID existe vraiment dans la base
+              if (rawItems.find(i => i.id === possibleId)) foundId = possibleId;
+        }
+        
+        // Ajout au Todo
+        userTodos.push({ text: val, done: false, id: Date.now(), linkedItemId: foundId });
+
+        // --- SYNCHRONISATION CALENDRIER (AJOUT) ---
+        if (foundId) {
+            const todayKey = new Date().toISOString().split('T')[0];
+            if (!userPlanning[todayKey]) userPlanning[todayKey] = [];
+            
+            if (!userPlanning[todayKey].includes(foundId)) {
+                userPlanning[todayKey].push(foundId);
             }
         }
+        // ------------------------------------------
+        
+        input.value = '';
+        saveData();
+        renderTodos();
+        
+        // Rafraîchissement Calendrier
+        if (!document.getElementById('calendarView').classList.contains('hidden')) {
+            renderCalendar();
+            if (selectedCalendarDate === todayKey && foundId) renderDayDetails(todayKey);
+        }
+    }
+}
         
 function addToTodos(id, title) {
     // 1. Vérifier si l'item est déjà dans la liste pour éviter les doublons
@@ -3565,7 +3586,7 @@ function addToTodos(id, title) {
         return;
     }
 
-    // 2. Création de l'objectif
+    // 2. Création de l'objectif (To-Do)
     userTodos.push({
         text: `Item ${id} - ${title}`,
         done: false,
@@ -3573,28 +3594,73 @@ function addToTodos(id, title) {
         linkedItemId: id
     });
 
+    // --- SYNCHRONISATION CALENDRIER (AJOUT) ---
+    // On récupère la date d'aujourd'hui au format YYYY-MM-DD
+    const todayKey = new Date().toISOString().split('T')[0];
+    
+    // Si le tableau du jour n'existe pas, on le crée
+    if (!userPlanning[todayKey]) userPlanning[todayKey] = [];
+    
+    // On ajoute l'ID au planning s'il n'y est pas déjà
+    if (!userPlanning[todayKey].includes(id)) {
+        userPlanning[todayKey].push(id);
+    }
+    // ------------------------------------------
+
     // 3. Sauvegarde et Mise à jour
     saveData();
     renderTodos();
     
-    // 4. Feedback visuel et sonore
-    playSound('success');
-    showToast(`Item ${id} ajouté aux objectifs !`, "success");
+    // Si le calendrier est ouvert, on le rafraîchit pour voir le point bleu apparaître
+    if (!document.getElementById('calendarView').classList.contains('hidden')) {
+        renderCalendar();
+        if (selectedCalendarDate === todayKey) renderDayDetails(todayKey);
+    }
     
-    // 5. Petite animation sur la zone des objectifs (optionnel mais sympa)
+    // 4. Feedback
+    playSound('success');
+    showToast(`Item ${id} ajouté aux objectifs & planning !`, "success");
+    
+    // 5. Animation visuelle
     const todoPanel = document.querySelector('#todoList').parentElement;
     todoPanel.classList.add('ring-2', 'ring-blue-500', 'ring-opacity-50');
     setTimeout(() => todoPanel.classList.remove('ring-2', 'ring-blue-500', 'ring-opacity-50'), 500);
 }
 
         function addSpecificTodo(id, title) {
-            userTodos.push({ text: `Item ${id} - ${title.substring(0, 25)}...`, done: false, id: Date.now(), linkedItemId: id });
-            document.getElementById('todoInput').value = '';
-            document.getElementById('autocompleteList').classList.add('hidden');
-            saveData();
-            renderTodos();
-            showToast('Objectif ajouté', 'success');
-        }
+    // Création du Todo
+    userTodos.push({ 
+        text: `Item ${id} - ${title.substring(0, 25)}...`, 
+        done: false, 
+        id: Date.now(), 
+        linkedItemId: id 
+    });
+
+    // --- SYNCHRONISATION CALENDRIER (AJOUT) ---
+    const todayKey = new Date().toISOString().split('T')[0];
+    if (!userPlanning[todayKey]) userPlanning[todayKey] = [];
+    
+    if (!userPlanning[todayKey].includes(id)) {
+        userPlanning[todayKey].push(id);
+    }
+    // ------------------------------------------
+
+    // Nettoyage UI
+    document.getElementById('todoInput').value = '';
+    document.getElementById('autocompleteList').classList.add('hidden');
+    
+    // Sauvegarde
+    saveData();
+    renderTodos();
+    
+    // Rafraîchissement Calendrier si ouvert
+    if (!document.getElementById('calendarView').classList.contains('hidden')) {
+        renderCalendar();
+        if (selectedCalendarDate === todayKey) renderDayDetails(todayKey);
+    }
+
+    showToast('Objectif ajouté au planning', 'success');
+}
 
         function toggleTodo(id) {
             const todo = userTodos.find(t => t.id === id);
