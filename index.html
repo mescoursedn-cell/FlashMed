@@ -615,16 +615,35 @@ input[type=range]::-webkit-slider-runnable-track {
         </div>
     </div>
 
-<div class="fixed bottom-6 right-6 z-[90]">
-    <button onclick="toggleBackgroundMusic()" id="musicBtn" class="w-12 h-12 rounded-full bg-[#111]/80 backdrop-blur-md border border-white/10 text-gray-400 hover:text-white hover:border-purple-500/50 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all duration-500 flex items-center justify-center group">
-        <i id="musicIcon" class="fa-solid fa-music text-sm group-hover:scale-110 transition-transform"></i>
+<div class="fixed bottom-6 right-6 z-[90] flex flex-row-reverse items-center gap-4">
+    
+    <button onclick="toggleMusicMenu()" id="mainMusicBtn" class="w-14 h-14 rounded-full bg-[#050505] border border-white/10 text-gray-400 hover:text-white hover:border-purple-500/50 hover:shadow-[0_0_25px_rgba(168,85,247,0.3)] transition-all duration-500 flex items-center justify-center group z-50 relative shadow-2xl">
         
-        <div id="musicVisualizer" class="hidden absolute inset-0 items-center justify-center gap-1">
+        <i id="mainMusicIcon" class="fa-solid fa-music text-lg group-hover:scale-110 transition-transform duration-300"></i>
+        
+        <div id="musicVisualizer" class="hidden absolute inset-0 items-center justify-center gap-1 pointer-events-none">
             <div class="w-0.5 h-3 bg-purple-400 animate-[pulse_1s_ease-in-out_infinite]"></div>
             <div class="w-0.5 h-5 bg-purple-400 animate-[pulse_1.2s_ease-in-out_infinite]"></div>
             <div class="w-0.5 h-3 bg-purple-400 animate-[pulse_0.8s_ease-in-out_infinite]"></div>
         </div>
     </button>
+
+    <div id="musicMenuOptions" class="flex items-center gap-2 pr-2 pl-2 py-2 bg-[#0a0a0a]/95 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl transition-all duration-500 ease-out opacity-0 translate-x-10 pointer-events-none scale-95 origin-right">
+        
+        <button onclick="togglePlayPause()" id="miniPlayBtn" class="w-10 h-10 rounded-full bg-white text-black hover:bg-gray-200 flex items-center justify-center transition-all shadow-lg group/play">
+            <i id="miniPlayIcon" class="fa-solid fa-play text-xs ml-0.5"></i>
+        </button>
+
+        <div class="w-px h-6 bg-white/10 mx-1"></div> <button onclick="setMusicTheme('theme1')" class="w-10 h-10 rounded-full bg-blue-900/20 border border-blue-500/30 text-blue-400 hover:text-white hover:bg-blue-600 hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] flex items-center justify-center transition-all group relative" title="Thème Focus">
+            <i class="fa-solid fa-wind text-xs"></i>
+        </button>
+
+        <button onclick="setMusicTheme('theme2')" class="w-10 h-10 rounded-full bg-purple-900/20 border border-purple-500/30 text-purple-400 hover:text-white hover:bg-purple-600 hover:shadow-[0_0_15px_rgba(168,85,247,0.6)] flex items-center justify-center transition-all group relative" title="Thème Épique">
+            <i class="fa-solid fa-fire text-xs"></i>
+        </button>
+
+    </div>
+
 </div>
 
     <header class="fixed top-0 w-full z-50 bg-[#050505]/80 backdrop-blur-xl border-b border-white/10 transition-all duration-300 shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
@@ -1312,7 +1331,7 @@ input[type=range]::-webkit-slider-runnable-track {
         <button class="absolute top-6 right-6 w-12 h-12 rounded-full bg-white/10 hover:bg-red-500 text-white transition flex items-center justify-center z-50 backdrop-blur-md border border-white/10">
             <i class="fa-solid fa-times text-xl"></i>
         </button>
-        <img id="lightboxImg" src="" class="max-w-[95vw] max-h-[95vh] rounded-lg shadow-2xl object-contain transform scale-95 transition-transform duration-300">
+        <img id="lightboxImg" src="" class="max-w-[80vw] max-h-[80vh] rounded-lg shadow-2xl object-contain transform scale-95 transition-transform duration-300">
     </div>
 </div>
 
@@ -1491,7 +1510,10 @@ input[type=range]::-webkit-slider-runnable-track {
     </div>
 
     <div id="playerModal" class="hidden fixed inset-0 z-[80] modal-backdrop flex items-center justify-center px-4 transition-all duration-300 opacity-0 scale-95"><div id="playerWrapper" class="bg-[#111] border border-white/10 rounded-2xl shadow-2xl relative overflow-hidden flex flex-col transition-all duration-500 ease-out"><div class="bg-black/50 backdrop-blur-sm px-6 py-4 border-b border-white/5 flex justify-between items-center z-20 absolute top-0 w-full"><h3 class="text-sm font-bold text-white font-display truncate pr-4 drop-shadow-md" id="playerTitle">Lecture</h3><button onclick="closePlayer()" class="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center text-gray-300 hover:text-white hover:bg-red-500/80 transition"><i class="fa-solid fa-times"></i></button></div><div class="relative bg-black flex items-center justify-center w-full h-full" id="playerContainer"><div id="playerLoader" class="absolute inset-0 flex flex-col items-center justify-center bg-[#0a0a0a] z-10"><div class="w-12 h-12 bg-white text-black flex items-center justify-center font-display font-black text-xl tracking-tighter rounded-sm animate-pulse-fast">UM</div></div></div></div></div>
-    <div id="addModal" class="hidden fixed inset-0 z-[60] modal-backdrop flex items-center justify-center px-4"><div class="bg-[#111] border border-white/10 rounded-3xl w-full max-w-md p-6 shadow-2xl transform transition-all scale-100"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-white font-display" id="modalTitle">Ajouter</h3><button onclick="closeModal()" class="text-gray-500 hover:text-white"><i class="fa-solid fa-times text-xl"></i></button></div><div class="space-y-4"><div id="itemInputGroup"><label class="block text-xs font-bold uppercase text-gray-500 mb-2">Numéro d'Item</label><input type="number" id="targetItem" placeholder="Ex: 331" class="w-full bg-[#222] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-white transition"></div><div id="typeInputGroup"><label class="block text-xs font-bold uppercase text-gray-500 mb-2">Format</label><div class="grid grid-cols-2 gap-3"><label class="cursor-pointer"><input type="radio" name="resType" value="video" class="peer sr-only" checked><div class="p-3 bg-[#222] rounded-xl text-center text-gray-500 peer-checked:text-red-500 peer-checked:bg-red-500/10 border border-transparent peer-checked:border-red-500/20 transition"><i class="fa-solid fa-video"></i> Vidéo</div></label><label class="cursor-pointer"><input type="radio" name="resType" value="audio" class="peer sr-only"><div class="p-3 bg-[#222] rounded-xl text-center text-gray-500 peer-checked:text-yellow-500 peer-checked:bg-yellow-500/10 border border-transparent peer-checked:border-yellow-500/20 transition"><i class="fa-solid fa-headphones"></i> Audio</div></label><label class="cursor-pointer"><input type="radio" name="resType" value="flash" class="peer sr-only"><div class="p-3 bg-[#222] rounded-xl text-center text-gray-500 peer-checked:text-purple-500 peer-checked:bg-purple-500/10 border border-transparent peer-checked:border-purple-500/20 transition"><i class="fa-solid fa-bolt"></i> Flash</div></label><label class="cursor-pointer"><input type="radio" name="resType" value="fiche" class="peer sr-only"><div class="p-3 bg-[#222] rounded-xl text-center text-gray-500 peer-checked:text-blue-500 peer-checked:bg-blue-500/10 border border-transparent peer-checked:border-blue-500/20 transition"><i class="fa-solid fa-file-pdf"></i> Fiche</div></label></div></div><div><label class="block text-xs font-bold uppercase text-gray-500 mb-2">Lien URL</label><input type="text" id="newLink" placeholder="https://..." class="w-full bg-[#222] border border-[#333] rounded-xl px-4 py-3 text-white text-sm focus:border-white transition"></div></div><div class="flex justify-end gap-3 mt-8"><button onclick="closeModal()" class="px-4 py-2 text-gray-400 hover:text-white text-sm font-medium">Annuler</button><button onclick="attachResource()" class="px-8 py-3 bg-white text-black rounded-xl text-sm font-bold hover:bg-gray-200 transition shadow-lg">Enregistrer</button></div></div></div>
+    <div id="addModal" class="hidden fixed inset-0 z-[60] modal-backdrop flex items-center justify-center px-4"><div class="bg-[#111] border border-white/10 rounded-3xl w-full max-w-md p-6 shadow-2xl transform transition-all scale-100"><div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-white font-display" id="modalTitle">Ajouter</h3><button onclick="closeModal()" class="text-gray-500 hover:text-white"><i class="fa-solid fa-times text-xl"></i></button></div><div class="space-y-4"><div id="itemInputGroup"><label class="block text-xs font-bold uppercase text-gray-500 mb-2">Numéro d'Item</label><input type="number" id="targetItem" placeholder="Ex: 331" class="w-full bg-[#222] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-white transition"></div><div id="typeInputGroup"><label class="block text-xs font-bold uppercase text-gray-500 mb-2">Format</label><div class="grid grid-cols-2 gap-3"><label class="cursor-pointer"><input type="radio" name="resType" value="video" class="peer sr-only" checked><div class="p-3 bg-[#222] rounded-xl text-center text-gray-500 peer-checked:text-red-500 peer-checked:bg-red-500/10 border border-transparent peer-checked:border-red-500/20 transition"><i class="fa-solid fa-video"></i> Vidéo</div></label><label class="cursor-pointer"><input type="radio" name="resType" value="audio" class="peer sr-only"><div class="p-3 bg-[#222] rounded-xl text-center text-gray-500 peer-checked:text-yellow-500 peer-checked:bg-yellow-500/10 border border-transparent peer-checked:border-yellow-500/20 transition"><i class="fa-solid fa-headphones"></i> Audio</div></label><label class="cursor-pointer"><input type="radio" name="resType" value="flash" class="peer sr-only"><div class="p-3 bg-[#222] rounded-xl text-center text-gray-500 peer-checked:text-purple-500 peer-checked:bg-purple-500/10 border border-transparent peer-checked:border-purple-500/20 transition"><i class="fa-solid fa-bolt"></i> Flash</div></label><label class="cursor-pointer"><input type="radio" name="resType" value="fiche" class="peer sr-only"><div class="p-3 bg-[#222] rounded-xl text-center text-gray-500 peer-checked:text-blue-500 peer-checked:bg-blue-500/10 border border-transparent peer-checked:border-blue-500/20 transition"><i class="fa-solid fa-file-pdf"></i> Fiche</div></label></div></div><div><div id="nameInputGroup" class="mb-4">
+    <label class="block text-xs font-bold uppercase text-gray-500 mb-2">Titre (Optionnel)</label>
+    <input type="text" id="resourceName" placeholder="Ex: Cours du Collège, Vidéo Dr. Astuce..." class="w-full bg-[#222] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-white transition">
+</div><label class="block text-xs font-bold uppercase text-gray-500 mb-2">Lien URL</label><input type="text" id="newLink" placeholder="https://..." class="w-full bg-[#222] border border-[#333] rounded-xl px-4 py-3 text-white text-sm focus:border-white transition"></div></div><div class="flex justify-end gap-3 mt-8"><button onclick="closeModal()" class="px-4 py-2 text-gray-400 hover:text-white text-sm font-medium">Annuler</button><button onclick="attachResource()" class="px-8 py-3 bg-white text-black rounded-xl text-sm font-bold hover:bg-gray-200 transition shadow-lg">Enregistrer</button></div></div></div>
 <div id="linkModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity duration-300 opacity-0">
         <div class="glass-panel w-full max-w-sm p-6 rounded-2xl transform scale-95 transition-all duration-300">
             <h3 class="text-lg font-display font-bold text-white mb-4 flex items-center gap-2">
@@ -1515,6 +1537,31 @@ input[type=range]::-webkit-slider-runnable-track {
             </div>
         </div>
     </div>
+<div id="resourceListModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-black/90 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+    <div class="glass-panel w-full max-w-lg p-6 rounded-2xl transform scale-95 transition-all duration-300 flex flex-col max-h-[80vh]">
+        
+        <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+            <h3 class="text-xl font-display font-bold text-white flex items-center gap-3">
+                <i id="resListIcon" class="fa-solid fa-layer-group"></i>
+                <span id="resListTitle">Ressources</span>
+            </h3>
+            <button onclick="closeResourceListModal()" class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+
+        <div id="resListContainer" class="flex-grow overflow-y-auto custom-scrollbar space-y-3 pr-2">
+            </div>
+
+        <div class="mt-6 pt-4 border-t border-white/10">
+            <button id="resListAddBtn" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95">
+                <i class="fa-solid fa-plus"></i>
+                <span>Ajouter une nouvelle ressource</span>
+            </button>
+        </div>
+    </div>
+</div>
+
     <div id="aiModal" class="hidden fixed inset-0 z-[60] modal-backdrop flex items-center justify-center px-4"><div class="bg-[#111] border border-white/10 rounded-3xl w-full max-w-2xl h-[80vh] flex flex-col shadow-2xl"><div class="px-6 py-4 border-b border-white/5 flex justify-between items-center"><h3 class="font-bold text-white flex items-center gap-2" id="aiModalTitle"><i class="fa-solid fa-microchip text-purple-400"></i> Assistant IA</h3><button onclick="closeAiModal()" class="text-gray-500 hover:text-white"><i class="fa-solid fa-times"></i></button></div><div id="aiLoading" class="hidden absolute inset-0 z-50 bg-[#0a0a0a] flex flex-col items-center justify-center"><div class="w-12 h-12 bg-white text-black flex items-center justify-center font-display font-black text-xl tracking-tighter rounded-sm animate-pulse-fast">IA</div><p class="mt-4 text-gray-500 text-sm">Réflexion en cours...</p></div><div id="aiContent" class="flex-grow overflow-y-auto p-6 bg-[#0a0a0a] flashcard-content max-w-none prose prose-invert prose-p:text-gray-300 prose-headings:text-white hidden"></div><div id="tutorChatInterface" class="hidden flex flex-col h-full overflow-hidden"><div id="chatHistory" class="flex-grow overflow-y-auto p-4 space-y-4 bg-[#0a0a0a] scroll-smooth"></div><div class="p-4 border-t border-white/10 bg-[#111] flex gap-2"><input type="text" id="chatInput" class="flex-grow bg-[#222] border border-[#333] rounded-xl px-4 py-3 text-white focus:border-blue-500 transition text-sm" placeholder="Posez votre question sur l'item..." onkeypress="if(event.key === 'Enter') sendChatMessage()"><button onclick="sendChatMessage()" class="w-12 h-12 flex items-center justify-center bg-blue-600 text-white rounded-xl hover:bg-blue-500 transition"><i class="fa-solid fa-paper-plane"></i></button></div></div></div></div>
     <div id="confirmModal" class="hidden fixed inset-0 z-[90] modal-backdrop flex items-center justify-center px-4"><div class="bg-[#111] border border-white/10 rounded-2xl p-6 shadow-2xl max-w-sm w-full"><h3 class="text-lg font-bold text-white mb-2">Confirmation</h3><p class="text-gray-400 text-sm mb-6">Voulez-vous vraiment supprimer cette ressource ?</p><div class="flex justify-end gap-3"><button onclick="closeConfirmModal()" class="px-4 py-2 text-gray-400 hover:text-white text-sm font-medium">Non</button><button id="confirmBtnAction" class="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-bold hover:bg-red-700">Oui, supprimer</button></div></div></div>
 
@@ -1935,14 +1982,32 @@ input[type=range]::-webkit-slider-runnable-track {
             "Données synchronisées."
         ];
 
-/// --- SYSTEME SONORE ---
-	const audioSystem = {
+// --- GESTION MUSIQUE AVANCÉE (THÈMES) ---
+
+const audioSystem = {
     enabled: true,
-    // On sépare la musique des bruitages pour gérer le volume séparément
-    musicVolume: 0.05, // 5% de volume pour ne pas gêner la concentration
+    musicVolume: 0.15, // Volume un peu plus fort par défaut
     currentTrackIndex: 0,
     isPlaying: false,
-    playlist: [], // Sera rempli à l'init
+    currentTheme: 'theme1', // Thème par défaut
+    playlist: [], // Liste de lecture active
+    audioObj: new Audio(), // Un seul objet Audio pour éviter les superpositions
+
+    // DEFINITION DES THEMES
+    themes: {
+        theme1: [ // VOS MUSIQUES ACTUELLES
+            './sounds/Air/AR-01-Beginnings.mp3',
+            './sounds/Melody/ML-01-Beginnings.mp3',
+            './sounds/Strings/ST-01-Beginnings.mp3',
+            './sounds/Undertones/UT-01-Beginnings.mp3'
+        ],
+        theme2: [ // VOS 4 NOUVELLES MUSIQUES (Mettez ici vos noms de fichiers)
+            './sounds/Epic/Drive.mp3', 
+            './sounds/Epic/Clean-Bass.mp3',
+            './sounds/Epic/Keep-Moving.mp3',
+            './sounds/Epic/Painful-Wait-A.mp3'
+        ]
+    },
     
     sounds: {
         success: new Audio('https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3'),
@@ -1955,12 +2020,8 @@ input[type=range]::-webkit-slider-runnable-track {
         refresh: new Audio('https://assets.mixkit.co/active_storage/sfx/2043/2043-preview.mp3'),
         subjectClick: new Audio('https://assets.mixkit.co/active_storage/sfx/1120/1120-preview.mp3'),
         creature: new Audio('https://assets.mixkit.co/active_storage/sfx/2350/2350-preview.mp3'),
-        
-        // Vos musiques d'ambiance
-        track1: new Audio('./sounds/Air/AR-01-Beginnings.mp3'),
-        track2: new Audio('./sounds/Melody/ML-01-Beginnings.mp3'),
-        track3: new Audio('./sounds/Strings/ST-01-Beginnings.mp3'),
-        track4: new Audio('./sounds/Undertones/UT-01-Beginnings.mp3')
+	track4: new Audio('./sounds/Undertones/UT-01-Beginnings.mp3')
+
     }
 };
 
@@ -4833,66 +4894,134 @@ function render() {
 // --- GESTION MUSIQUE D'AMBIANCE ---
 
 function initMusicPlayer() {
-    // 1. On prépare la playlist
-    const s = audioSystem.sounds;
-    audioSystem.playlist = [s.track1, s.track2, s.track3, s.track4];
+    // Charger le thème par défaut
+    loadTheme('theme1');
     
-    // 2. On configure chaque piste
-    audioSystem.playlist.forEach((track, index) => {
-        track.volume = audioSystem.musicVolume; // Volume doux
-        
-        // Quand une piste finit, on lance la suivante
-        track.addEventListener('ended', () => {
-            playNextTrack();
-        });
-    });
+    // Écouteur pour passer à la piste suivante automatiquement
+    audioSystem.audioObj.addEventListener('ended', playNextTrack);
+    audioSystem.audioObj.volume = audioSystem.musicVolume;
 }
 
-function toggleBackgroundMusic() {
-    const btn = document.getElementById('musicBtn');
-    const icon = document.getElementById('musicIcon');
-    const viz = document.getElementById('musicVisualizer');
+// 2. Charger un thème dans la playlist
+function loadTheme(themeName) {
+    audioSystem.currentTheme = themeName;
+    audioSystem.playlist = audioSystem.themes[themeName] || audioSystem.themes['theme1'];
+    audioSystem.currentTrackIndex = 0;
     
-    // Si la playlist est vide (premier lancement), on init
-    if (audioSystem.playlist.length === 0) initMusicPlayer();
-
-    const currentTrack = audioSystem.playlist[audioSystem.currentTrackIndex];
-
+    // Si on change de thème pendant la lecture, on lance le nouveau
     if (audioSystem.isPlaying) {
-        // PAUSE
-        currentTrack.pause();
-        audioSystem.isPlaying = false;
+        playTrack(0);
+    }
+}
+
+// 3. Ouvrir / Fermer le menu
+function toggleMusicMenu() {
+    const menu = document.getElementById('musicMenuOptions');
+    const mainBtn = document.getElementById('mainMusicBtn');
+    const mainIcon = document.getElementById('mainMusicIcon');
+    const viz = document.getElementById('musicVisualizer');
+
+    const isOpen = !menu.classList.contains('pointer-events-none');
+
+    if (isOpen) {
+        // --- FERMETURE (Repli vers la droite) ---
+        // On ajoute translate-x-10 pour le faire glisser sous le bouton principal
+        menu.classList.add('opacity-0', 'translate-x-10', 'pointer-events-none', 'scale-95');
         
-        // Visuel
-        icon.classList.remove('hidden');
+        mainIcon.classList.replace('fa-xmark', 'fa-music');
+        mainBtn.classList.remove('border-purple-500', 'shadow-[0_0_20px_rgba(168,85,247,0.4)]'); // Retrait effet glow actif
+        
+        // Si musique joue, on réaffiche le visualiseur
+        if (audioSystem.isPlaying) {
+            mainIcon.classList.add('hidden');
+            viz.classList.remove('hidden');
+            viz.classList.add('flex');
+        }
+    } else {
+        // --- OUVERTURE (Déploiement vers la gauche) ---
+        // On enlève le décalage X
+        menu.classList.remove('opacity-0', 'translate-x-10', 'pointer-events-none', 'scale-95');
+        
+        // Gestion icône X
         viz.classList.add('hidden');
-        btn.classList.remove('border-purple-500', 'text-purple-400');
+        viz.classList.remove('flex');
+        mainIcon.classList.remove('hidden');
+        mainIcon.classList.replace('fa-music', 'fa-xmark');
+        
+        // Style bouton actif (Glow violet pour montrer qu'il est ouvert)
+        mainBtn.classList.add('border-purple-500', 'shadow-[0_0_20px_rgba(168,85,247,0.4)]');
+        
+        playSound('click');
+    }
+}
+
+// 4. Play / Pause (Bouton dédié)
+function togglePlayPause() {
+    if (audioSystem.isPlaying) {
+        audioSystem.audioObj.pause();
+        audioSystem.isPlaying = false;
         showToast("Musique en pause", "info");
     } else {
-        // PLAY
-        // On joue la piste en cours (ou la première)
-        currentTrack.play().catch(e => console.log("Autoplay bloqué", e));
+        // Si aucune source n'est chargée, on charge la première
+        if (!audioSystem.audioObj.src) {
+            playTrack(0);
+        } else {
+            audioSystem.audioObj.play().catch(e => console.log("Lecture bloquée", e));
+        }
         audioSystem.isPlaying = true;
-        
-        // Visuel
-        icon.classList.add('hidden');
-        viz.classList.remove('hidden'); // Affiche l'égaliseur
-        viz.classList.add('flex');
-        btn.classList.add('border-purple-500', 'text-purple-400');
-        showToast("Ambiance activée 🎵", "success");
+        showToast("Lecture en cours 🎵", "success");
+    }
+    updateMusicUI();
+}
+
+// 5. Changer de Thème (Clic sur bouton thème)
+function setMusicTheme(themeName) {
+    if (audioSystem.currentTheme === themeName && audioSystem.isPlaying) {
+        showToast("Ce thème joue déjà.", "info");
+        return;
+    }
+    
+    loadTheme(themeName);
+    playTrack(0); // Lance la première piste du nouveau thème
+    audioSystem.isPlaying = true;
+    
+    const nomTheme = themeName === 'theme1' ? 'Focus' : 'Épique';
+    showToast(`Thème activé : ${nomTheme}`, "success");
+    updateMusicUI();
+}
+
+// 6. Jouer une piste spécifique
+function playTrack(index) {
+    if (index >= audioSystem.playlist.length) index = 0; // Boucle
+    audioSystem.currentTrackIndex = index;
+    
+    const src = audioSystem.playlist[index];
+    audioSystem.audioObj.src = src;
+    audioSystem.audioObj.volume = audioSystem.musicVolume;
+    audioSystem.audioObj.play().catch(e => console.log("Autoplay bloqué", e));
+    audioSystem.isPlaying = true;
+}
+
+// 7. Piste suivante
+function playNextTrack() {
+    let nextIndex = audioSystem.currentTrackIndex + 1;
+    if (nextIndex >= audioSystem.playlist.length) nextIndex = 0;
+    playTrack(nextIndex);
+}
+
+// 8. Mise à jour visuelle des boutons
+function updateMusicUI() {
+    const miniIcon = document.getElementById('miniPlayIcon');
+    
+    if (audioSystem.isPlaying) {
+        miniIcon.classList.replace('fa-play', 'fa-pause');
+    } else {
+        miniIcon.classList.replace('fa-pause', 'fa-play');
     }
 }
 
-function playNextTrack() {
-    // Piste suivante (boucle)
-    audioSystem.currentTrackIndex = (audioSystem.currentTrackIndex + 1) % audioSystem.playlist.length;
-    const nextTrack = audioSystem.playlist[audioSystem.currentTrackIndex];
-    
-    if (audioSystem.isPlaying) {
-        nextTrack.currentTime = 0;
-        nextTrack.play().catch(e => console.log("Erreur lecture", e));
-    }
-}
+// Initialisation au chargement
+initMusicPlayer();
 
 /**
  * Baisse le volume progressivement puis coupe le son
@@ -6095,20 +6224,26 @@ document.getElementById('newLink').focus();
         function closeModal() { addModal.classList.add('hidden'); addModal.classList.remove('flex'); }
 
 function openModalForItem(id, type) { 
-            addModal.classList.remove('hidden'); 
-            addModal.classList.add('flex'); 
-            
-            document.getElementById('targetItem').value = id; 
-            
-            const radios = document.getElementsByName('resType'); 
-            for(const r of radios) if(r.value === type) r.checked = true; 
-            
-            document.getElementById('modalTitle').innerText = `Ajouter ${type.toUpperCase()}`; 
-            document.getElementById('itemInputGroup').classList.add('hidden'); 
-            document.getElementById('typeInputGroup').classList.add('hidden'); 
-            document.getElementById('newLink').value = ''; 
-            document.getElementById('newLink').focus(); 
-        }
+    addModal.classList.remove('hidden'); 
+    addModal.classList.add('flex'); 
+    
+    document.getElementById('targetItem').value = id; 
+    
+    const radios = document.getElementsByName('resType'); 
+    for(const r of radios) if(r.value === type) r.checked = true; 
+    
+    document.getElementById('modalTitle').innerText = `Ajouter ${type.toUpperCase()}`; 
+    document.getElementById('itemInputGroup').classList.add('hidden'); 
+    document.getElementById('typeInputGroup').classList.add('hidden'); 
+    
+    // --- AJOUT ICI : RESET DU NOM ---
+    document.getElementById('resourceName').value = ''; 
+    // --------------------------------
+    
+    document.getElementById('newLink').value = ''; 
+    document.getElementById('newLink').focus(); 
+}
+
         function closeAiModal() { 
             aiModal.classList.add('hidden');
             aiModal.classList.remove('flex');
@@ -6152,38 +6287,195 @@ addXP(10, `Lecture ${type}`);
         }
 
         function attachResource() {
-            const id = document.getElementById('targetItem').value; 
-            var type = 'video'; 
-            document.getElementsByName('resType').forEach(r => { if(r.checked) type = r.value; }); 
-            const link = document.getElementById('newLink').value;
-            
-            if(id && link) { 
-                // 1. Enregistrement des données
-                userResources = userResources.filter(r => !(r.itemId === id && r.type === type)); 
-                userResources.push({ itemId: id, type, link }); 
-                saveData(); 
-                
-                // 2. Mise à jour de la grille principale (Tableau de bord)
-                buildCourses(); 
-                render(); 
+    const id = document.getElementById('targetItem').value; 
+    var type = 'video'; 
+    document.getElementsByName('resType').forEach(r => { if(r.checked) type = r.value; }); 
+    const link = document.getElementById('newLink').value;
+    
+    // --- AJOUT : RÉCUPÉRATION DU NOM ---
+    const nameVal = document.getElementById('resourceName').value.trim();
+    // -----------------------------------
 
-                // --- AJOUT : MISE À JOUR DE LA VUE DÉTAILLÉE ---
-                // Si on est actuellement en train de regarder cet item en détail, on rafraîchit sa liste
-                if (currentItemId === id && !document.getElementById('itemDetailView').classList.contains('hidden')) {
-                    renderDetailResources(id);
-                }
-                // -----------------------------------------------
+    if(id && link) { 
+        // On sauvegarde le nom. S'il est vide, on ne met rien (le système devinera un nom plus tard)
+        userResources.push({ 
+            itemId: id, 
+            type, 
+            link, 
+            name: nameVal, // Nouveau champ
+            addedAt: Date.now() 
+        }); 
+        
+        saveData(); 
+        
+        buildCourses(); 
+        render(); 
 
-                // 3. Feedback & Fermeture
-                addXP(10, 'Ressource ajoutée'); // Petit bonus XP pour l'organisation
-                closeModal(); 
-                playSound('success');
-                showToast('Ressource attachée avec succès', 'success');
-            } else {
-                playSound('error');
-                showToast('Veuillez remplir tous les champs', 'error');
+        if (currentItemId === id && !document.getElementById('itemDetailView').classList.contains('hidden')) {
+            renderDetailResources(id);
+            if(!document.getElementById('resourceListModal').classList.contains('hidden')) {
+                openResourceListModal(id, type);
             }
         }
+
+        closeModal(); 
+        playSound('success');
+        showToast('Ressource ajoutée', 'success');
+    } else {
+        playSound('error');
+        showToast('Le lien est obligatoire', 'error');
+    }
+}
+
+function openResourceListModal(itemId, type) {
+    const modal = document.getElementById('resourceListModal');
+    const container = document.getElementById('resListContainer');
+    const title = document.getElementById('resListTitle');
+    const icon = document.getElementById('resListIcon');
+    const addBtn = document.getElementById('resListAddBtn');
+    
+    const typesConfig = {
+        video: { label: 'Vidéos', icon: 'fa-video', color: 'red' },
+        audio: { label: 'Audios', icon: 'fa-headphones', color: 'yellow' },
+        flash: { label: 'Flashcards', icon: 'fa-bolt', color: 'purple' },
+        fiche: { label: 'Fiches PDF', icon: 'fa-file-pdf', color: 'blue' }
+    };
+    const conf = typesConfig[type];
+
+    title.innerText = `Bibliothèque ${conf.label}`;
+    title.className = `text-xl font-display font-bold text-${conf.color}-400 flex items-center gap-3`;
+    icon.className = `fa-solid ${conf.icon}`;
+    
+    addBtn.onclick = () => { closeResourceListModal(); openModalForItem(itemId, type); };
+    addBtn.className = `w-full py-3 rounded-xl bg-${conf.color}-600 hover:bg-${conf.color}-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95`;
+
+    const resources = userResources.filter(r => r.itemId === itemId && r.type === type);
+
+    if (resources.length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-gray-500 italic">Aucune ressource de ce type.</div>`;
+    } else {
+        container.innerHTML = resources.map((res, index) => {
+            // Nom par défaut
+            let displayName = res.name;
+            if (!displayName) {
+                try {
+                    const urlObj = new URL(res.link);
+                    displayName = urlObj.hostname.replace('www.', '') + (urlObj.pathname.length > 1 ? urlObj.pathname.substring(0, 15) + '...' : '');
+                } catch(e) { displayName = `Ressource #${index + 1}`; }
+            }
+
+            // On échappe les guillemets pour éviter les bugs HTML
+            const safeLink = res.link.replace(/'/g, "\\'");
+            const safeName = displayName.replace(/'/g, "&apos;");
+
+            return `
+            <div class="bg-white/5 border border-white/10 hover:border-${conf.color}-500/50 rounded-xl p-3 flex items-center gap-3 group transition-all">
+                
+                <div class="w-10 h-10 rounded-lg bg-${conf.color}-500/20 text-${conf.color}-400 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                    ${index + 1}
+                </div>
+                
+                <div class="flex-grow overflow-hidden">
+                    
+                    <div id="display-mode-${index}" class="cursor-pointer" onclick="closeResourceListModal(); openPlayer('${safeLink}', '${type}', '${safeName}')">
+                        <div class="text-sm font-bold text-gray-200 group-hover:text-white truncate">${displayName}</div>
+                        <div class="text-[10px] text-gray-500 truncate font-mono">${res.link}</div>
+                    </div>
+
+                    <div id="edit-mode-${index}" class="hidden flex items-center gap-2">
+                        <input type="text" id="input-rename-${index}" value="${safeName}" 
+                               class="w-full bg-[#111] border border-blue-500 rounded px-2 py-1 text-xs text-white focus:outline-none"
+                               onkeydown="if(event.key === 'Enter') saveRenamedResource(${index}, '${itemId}', '${type}', '${safeLink}')">
+                        
+                        <button onclick="saveRenamedResource(${index}, '${itemId}', '${type}', '${safeLink}')" class="w-6 h-6 rounded bg-green-600 text-white flex items-center justify-center hover:bg-green-500">
+                            <i class="fa-solid fa-check text-xs"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                <div id="actions-${index}" class="flex gap-1">
+                    <button onclick="enableRenaming(${index})" class="w-8 h-8 rounded-lg hover:bg-blue-500/20 text-gray-600 hover:text-blue-400 flex items-center justify-center transition" title="Renommer">
+                        <i class="fa-solid fa-pen text-xs"></i>
+                    </button>
+
+                    <button onclick="deleteSpecificResource('${itemId}', '${type}', '${safeLink}')" class="w-8 h-8 rounded-lg hover:bg-red-500/20 text-gray-600 hover:text-red-500 flex items-center justify-center transition" title="Supprimer">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
+                </div>
+
+            </div>`;
+        }).join('');
+    }
+
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modal.querySelector('.glass-panel').classList.remove('scale-95');
+        modal.querySelector('.glass-panel').classList.add('scale-100');
+    }, 10);
+}
+
+// Active le mode édition pour une ligne précise
+function enableRenaming(index) {
+    // 1. Masquer l'affichage et les boutons d'action
+    document.getElementById(`display-mode-${index}`).classList.add('hidden');
+    document.getElementById(`actions-${index}`).classList.add('hidden');
+    
+    // 2. Afficher le champ d'édition
+    const editDiv = document.getElementById(`edit-mode-${index}`);
+    editDiv.classList.remove('hidden');
+    
+    // 3. Mettre le focus dans l'input automatiquement
+    const input = document.getElementById(`input-rename-${index}`);
+    input.focus();
+    input.select(); // Sélectionne tout le texte pour écraser rapidement
+}
+
+// Sauvegarde le nouveau nom
+function saveRenamedResource(index, itemId, type, link) {
+    const input = document.getElementById(`input-rename-${index}`);
+    const newName = input.value.trim();
+    
+    if (newName) {
+        // On trouve la ressource correspondante dans le tableau
+        // Note : On utilise filter comme dans l'affichage pour être sûr de l'ordre, 
+        // ou findIndex avec les critères exacts
+        const resource = userResources.find(r => r.itemId === itemId && r.type === type && r.link === link);
+        
+        if (resource) {
+            resource.name = newName;
+            saveData(); // Sauvegarde Cloud
+            
+            // On rafraîchit la liste pour revenir au mode affichage
+            openResourceListModal(itemId, type);
+            playSound('click');
+        }
+    }
+}
+
+function closeResourceListModal() {
+    const modal = document.getElementById('resourceListModal');
+    modal.classList.add('opacity-0');
+    modal.querySelector('.glass-panel').classList.remove('scale-100');
+    modal.querySelector('.glass-panel').classList.add('scale-95');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+}
+
+function deleteSpecificResource(itemId, type, link) {
+    if(confirm("Supprimer cette ressource précise ?")) {
+        // On cherche l'index exact pour ne supprimer que celle-ci (au cas où doublon de lien)
+        const index = userResources.findIndex(r => r.itemId === itemId && r.type === type && r.link === link);
+        if (index > -1) {
+            userResources.splice(index, 1);
+            saveData();
+            // Rafraîchir la liste sans fermer la modale
+            openResourceListModal(itemId, type);
+            // Rafraîchir le fond
+            renderDetailResources(itemId);
+        }
+    }
+}
 
 function removeResource(id, type) {
             openConfirmModal(() => {
@@ -7238,23 +7530,25 @@ function setDifficulty(level) {
 // -- Gestion Ressources (Liste) --
 function renderDetailResources(itemId) {
     const list = document.getElementById('detailResourcesList');
-    const resources = userResources.filter(r => r.itemId === itemId);
     
+    // Tous les types possibles
     const types = [
-        { id: 'video', label: 'Vidéo', icon: 'fa-video', color: 'red' },
-        { id: 'audio', label: 'Audio', icon: 'fa-headphones', color: 'yellow' },
-        { id: 'flash', label: 'Flash', icon: 'fa-bolt', color: 'purple' },
-        { id: 'fiche', label: 'Fiche', icon: 'fa-file-pdf', color: 'blue' }
+        { id: 'video', label: 'Vidéos', icon: 'fa-video', color: 'red' },
+        { id: 'audio', label: 'Audios', icon: 'fa-headphones', color: 'yellow' },
+        { id: 'flash', label: 'Flashcards', icon: 'fa-bolt', color: 'purple' },
+        { id: 'fiche', label: 'Fiches', icon: 'fa-file-pdf', color: 'blue' }
     ];
 
     list.innerHTML = types.map(t => {
-        const res = resources.find(r => r.type === t.id);
+        // On compte combien de ressources de ce type existent pour cet item
+        const resourcesOfType = userResources.filter(r => r.itemId === itemId && r.type === t.id);
+        const count = resourcesOfType.length;
         
-        if (res) {
-            // --- RESSOURCE DISPONIBLE (STYLE CAPSULE ACTIVE) ---
+        if (count > 0) {
+            // --- RESSOURCES DISPONIBLES : OUVERTURE DE LA LISTE ---
             return `
             <div class="flex items-stretch gap-3 group animate-fade-in-up">
-                <button onclick="trackResourceView('${itemId}', '${t.id}'); openPlayer('${res.link}', '${t.id}', '${document.getElementById('detailTitle').innerText.replace(/'/g, "&apos;")}')" 
+                <button onclick="openResourceListModal('${itemId}', '${t.id}')" 
                         class="flex-grow relative overflow-hidden bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-${t.color}-500/50 hover:bg-${t.color}-500/10 p-3 rounded-2xl flex items-center justify-between transition-all duration-300 group/btn hover:shadow-lg hover:shadow-${t.color}-900/20 text-left">
                     
                     <div class="absolute inset-0 bg-gradient-to-r from-${t.color}-500/0 via-${t.color}-500/5 to-${t.color}-500/0 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
@@ -7266,23 +7560,19 @@ function renderDetailResources(itemId) {
                         
                         <div class="flex flex-col">
                             <span class="text-sm text-gray-200 font-bold group-hover/btn:text-white transition-colors">${t.label}</span>
-                            <span class="text-[10px] text-${t.color}-400/70 font-mono uppercase tracking-wider font-bold">Disponible</span>
+                            <span class="text-[10px] text-${t.color}-400/70 font-mono uppercase tracking-wider font-bold">
+                                ${count} Ressource${count > 1 ? 's' : ''}
+                            </span>
                         </div>
                     </div>
                     
                     <div class="w-10 h-10 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-gray-400 group-hover/btn:bg-${t.color}-500 group-hover/btn:text-black group-hover/btn:border-${t.color}-400 transition-all duration-300 relative z-10 shadow-lg">
-                        <i class="fa-solid fa-play text-xs ml-0.5"></i>
+                        <i class="fa-solid fa-list-ul text-xs"></i>
                     </div>
-                </button>
-                
-                <button onclick="removeResource('${itemId}', '${t.id}')" 
-                        class="w-14 rounded-2xl bg-white/[0.02] border border-white/5 text-gray-600 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/30 flex items-center justify-center transition-all duration-300"
-                        title="Supprimer la ressource">
-                    <i class="fa-solid fa-trash-can text-lg opacity-60 hover:opacity-100"></i>
                 </button>
             </div>`;
         } else {
-            // --- RESSOURCE MANQUANTE (STYLE FANTÔME) ---
+            // --- AUCUNE RESSOURCE : BOUTON AJOUT ---
             return `
             <button onclick="openModalForItem('${itemId}', '${t.id}')" 
                     class="w-full bg-white/[0.01] border border-white/5 border-dashed p-3 rounded-2xl flex items-center justify-between text-gray-600 hover:text-gray-300 hover:bg-white/[0.03] hover:border-white/20 transition-all duration-300 group animate-fade-in-up">
@@ -7448,7 +7738,9 @@ function compressImage(file) {
             img.src = event.target.result;
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 1200; // Un peu plus grand pour la lisibilité des schémas
+                
+                // MODIFICATION 1 : Augmenter la largeur max (de 1200 à 1920px pour du Full HD)
+                const MAX_WIDTH = 1920; 
                 const scaleSize = MAX_WIDTH / img.width;
                 
                 // On garde les proportions exactes
@@ -7458,8 +7750,8 @@ function compressImage(file) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
-                // Compression JPEG 75%
-                resolve(canvas.toDataURL('image/jpeg', 0.75)); 
+                // MODIFICATION 2 : Qualité JPEG passée de 0.75 à 0.92 (Très haute qualité)
+                resolve(canvas.toDataURL('image/jpeg', 0.92)); 
             };
             img.onerror = (err) => reject(err);
         };
@@ -7469,12 +7761,17 @@ function compressImage(file) {
 
 // 4. Suppression
 function deleteItemImage(index) {
-    if (confirm("Supprimer cette image ?")) {
-        userItemImages[currentItemId].splice(index, 1);
-        saveData();
-        renderItemGallery(currentItemId);
-        playSound('click');
-    }
+    openConfirmModal(() => {
+        if (userItemImages[currentItemId]) {
+            userItemImages[currentItemId].splice(index, 1);
+            saveData();
+            
+            renderItemGallery(currentItemId); // Rafraîchir la galerie
+            
+            playSound('error'); // Petit son de suppression (comme pour les ressources)
+            showToast("Image supprimée de la galerie", "info");
+        }
+    });
 }
 
 // 5. Lightbox
