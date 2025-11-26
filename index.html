@@ -4421,7 +4421,7 @@ function toggleSuggestionDone(itemId) {
     render();
     updateStats();
     
-    // 5. Vérification Grand Chelem
+    // 5. Vérification Exceptionnel
     if (dailySuggestionsDone[itemId]) {
         checkAllSuggestionsDone();
     }
@@ -4429,17 +4429,15 @@ function toggleSuggestionDone(itemId) {
 
 function checkAllSuggestionsDone() {
     if (currentSuggestions.length > 0 && currentSuggestions.every(s => dailySuggestionsDone[s.id])) {
-        setTimeout(() => {
-            addXP(500, 'Grand Chelem !'); // BONUS MASSIF
-            
-            // Le son levelUp est géré dans addXP si on passe un niveau, 
-            // sinon on peut le jouer ici aussi si on veut doubler l'effet :
-            // playSound('levelUp'); 
-            
-            showCelebrationSuggestions(); 
-            tryUnlockNewAvatar(); 
-        }, 500); 
-    }
+    setTimeout(() => {
+        addXP(500, 'Exceptionnel !'); // BONUS MASSIF
+        
+        // NOUVEL APPEL : Utilise le type 'GRAND_CHELEM'
+        showCelebration('GRAND_CHELEM'); 
+        
+        tryUnlockNewAvatar(); 
+    }, 500); 
+}
 }
         function showUnlockToast(icon) {
             const container = document.getElementById('toast-container');
@@ -5573,11 +5571,18 @@ function startTutorial() {
         userXPClaimed[id].lu = true;
     }
     else if (userStatus[id] === 'maitrise' && !userXPClaimed[id].maitrise) {
-        addXP(200, 'Cours Maîtrisé (1ère fois)');
-        // On lance l'anim Maîtrise sauf si on vient de lancer l'anim Légendaire (pour ne pas superposer)
-        if (userVues[id] !== 10) showCelebration();
-        userXPClaimed[id].maitrise = true;
+    // 1. On trouve le titre de l'item AVANT d'appeler la fonction
+    const itemTitle = rawItems.find(i => i.id === id)?.t || "Item inconnu";
+    
+    addXP(200, 'Cours Maîtrisé (1ère fois)');
+    
+    // 2. On lance l'animation en passant le type et le titre (data)
+    if (userVues[id] !== 10) {
+        showCelebration('MASTERY', itemTitle);
     }
+    
+    userXPClaimed[id].maitrise = true;
+}
 
     // 4. SAUVEGARDE ET RENDU
     saveData();
@@ -5703,11 +5708,11 @@ function updateErrorButtonLabel() {
 }
 
         /* --- MODE OR (MAÎTRISE) --- */
-function showCelebration() {
+function showCelebration(type, data = null) {
     const overlay = document.getElementById('celebrationOverlay');
     const content = document.getElementById('celebrationContent');
-    const title = document.querySelector('#celebrationOverlay h2');
-    const subtitle = document.querySelector('#celebrationOverlay span');
+    const titleEl = document.querySelector('#celebrationOverlay h2');
+    const subtitleEl = document.querySelector('#celebrationOverlay span');
     
     const dragon = document.getElementById('iconDragon');
     const crown = document.getElementById('iconCrown');
@@ -5715,44 +5720,91 @@ function showCelebration() {
     const ring = document.getElementById('celebrationRing');
     const glow = document.getElementById('celebrationGlow');
 
-    playSound('mastery'); 
-
-    // 1. TEXTES EN OR
-    title.innerText = 'MAÎTRISÉ';
-    // J'ai ajouté 'py-4' et 'leading-normal' pour éviter la coupure
-    title.className = "text-6xl md:text-8xl font-display font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 to-yellow-600 tracking-widest uppercase drop-shadow-2xl py-4 leading-normal";
+    // --- 1. DÉFINITION DU THÈME ET DU CONTENU ---
+    let title = 'VICTOIRE !';
+    let subtitle = 'Félicitations';
+    let iconToShow = dragon; 
     
-    subtitle.innerText = 'Item Validé';
-    subtitle.className = "text-yellow-500/80 font-mono text-sm uppercase tracking-[0.4em]";
+    // Définitions de couleurs de base
+    let baseColor = 'yellow';
+    let fromColor = 'yellow-200';
+    let toColor = 'yellow-600';
+    let ringClass = 'border-yellow-500/30 animate-gold-pulse';
+    let glowColor = 'rgba(250, 204, 21, 0.2)';
 
-    // 2. ICÔNES EN OR
-    dragon.className = "fa-solid fa-dragon text-[180px] drop-shadow-2xl relative z-10 text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]";
-    dragon.classList.remove('hidden');
+    // Réinitialisation des icônes
+    [dragon, crown, trophy].forEach(el => el.classList.add('hidden'));
 
-    crown.className = "fa-solid fa-crown text-6xl text-yellow-400 absolute -top-16 left-1/2 transform -translate-x-1/2 animate-bounce z-20 drop-shadow-[0_0_20px_rgba(250,204,21,0.8)]";
-    crown.classList.remove('hidden'); 
+    if (type === 'LEVELUP') {
+        // --- THÈME VERT (Level Up) ---
+        title = 'NIVEAU UP !';
+        subtitle = `Vous êtes maintenant Niveau ${userLevel} !`;
+        iconToShow = dragon; 
+        
+        // Nouvelle palette verte
+        baseColor = 'green';
+        fromColor = 'green-200';
+        toColor = 'green-600';
+        ringClass = 'border-green-500/30 animate-pulse-fast'; // Utilisation d'une animation plus simple
+        glowColor = 'rgba(34, 197, 94, 0.3)';
+        
+        // --- NOUVELLE LIGNE : COLORATION DU DRAGON ---
+        // On remplace le style par défaut par le Vert
+        dragon.className = `fa-solid ${userAvatar} text-[180px] text-green-400 drop-shadow-[0_0_20px_rgba(34,197,94,0.8)] relative z-10`;
+        // On s'assure que la couronne est cachée pour le Level Up simple
+        crown.classList.add('hidden');
+        
+        playSound('levelUp');
+    } else if (type === 'MASTERY') {
+        // CÉLÉBRATION MAÎTRISE D'ITEM (Trophée / Dragon avec Couronne)
+        title = 'MAÎTRISÉ !';
+        subtitle = `L'item "${data}" est validé.`; 
+        iconToShow = trophy;
+        crown.classList.add('hidden'); // S'assure que la couronne ne reste pas
+        iconToShow.classList.remove('hidden');
+        playSound('mastery');
+    } else if (type === 'GRAND_CHELEM') {
+        // Exceptionnel reste en Or
+        title = 'EXCEPTIONNEL !';
+        subtitle = 'Toutes les suggestions du jour sont complétées';
+        iconToShow = trophy;
+        iconToShow.classList.remove('hidden');
+        playSound('mastery');
+    }
     
-    trophy.classList.add('hidden');
+    // --- 2. APPLICATION DES STYLES DYNAMIQUES ---
+    
+    // Application du titre avec la couleur choisie
+    titleEl.innerText = title;
+    titleEl.className = `text-6xl md:text-8xl font-display font-black text-transparent bg-clip-text bg-gradient-to-b from-${fromColor} to-${toColor} tracking-widest uppercase drop-shadow-2xl py-4 leading-normal`;
+    
+    // Application du sous-titre
+    subtitleEl.innerText = subtitle;
+    subtitleEl.className = `text-${baseColor}-500/80 font-mono text-sm uppercase tracking-[0.4em]`;
 
-    // 3. CERCLE & GLOW EN OR (Retour à la normale)
-    // On remet bg-yellow et animate-gold-pulse
-    if(ring) ring.className = "absolute inset-0 rounded-full border-2 border-yellow-500/30 animate-gold-pulse scale-150";
-    if(glow) glow.className = "absolute inset-0 bg-yellow-500/20 blur-[120px] rounded-full";
-
-    // 4. AFFICHAGE
+    // CERCLE & GLOW
+    if(ring) ring.className = `absolute inset-0 rounded-full border-2 ${ringClass} scale-150`;
+    if(glow) glow.className = `absolute inset-0 bg-${baseColor}-500/20 blur-[120px] rounded-full`;
+    
+    // Style de l'icône principale (Dragon ou Trophée)
+    iconToShow.classList.remove('hidden');
+    
+    // 3. AFFICHAGE ET TIMING
     overlay.classList.remove('hidden');
     void overlay.offsetWidth;
     requestAnimationFrame(() => {
-            overlay.classList.remove('opacity-0');
-            overlay.classList.add('active'); 
-            content.classList.remove('scale-0');
+        overlay.classList.remove('opacity-0');
+        overlay.classList.add('active'); 
+        content.classList.remove('scale-0');
     });
+
+    // Masquage automatique
     setTimeout(() => {
         overlay.classList.remove('active');
         overlay.classList.add('opacity-0');
         content.classList.add('scale-0');
         setTimeout(() => overlay.classList.add('hidden'), 500);
-    }, 2500);
+    }, 2500); 
 }
 
 /* --- MODE VIOLET (LÉGENDAIRE) --- */
@@ -6107,7 +6159,7 @@ function addXP(amount, reason) {
         
         // 1. Feedback de base
         playSound('levelUp'); 
-        showCelebration(); 
+        showCelebration('LEVELUP'); 
         showToast(`NIVEAU ${userLevel} ATTEINT !`, 'success');
     } 
     
