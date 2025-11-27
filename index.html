@@ -3511,21 +3511,30 @@ function updateUserPassword() {
     const greeting = hour >= 18 || hour < 5 ? "Bonsoir" : "Bonjour";
     const targetName = userName || userAlias;
     
-    // Mise à jour du titre principal
+    // 1. Mise à jour du titre principal
     const greetingEl = document.getElementById('greetingDisplay');
     if(greetingEl) greetingEl.innerText = `${greeting}, ${targetName}.`;
     
-    // Mise à jour de l'icône du logo (Gauche)
+    // 2. Mise à jour de l'icône du logo (Header Gauche)
     const navIcon = document.getElementById('navbarIcon');
     if(navIcon) navIcon.className = `fa-solid ${userAvatar} text-3xl text-white relative z-10 group-hover:scale-110 transition-transform`;
 
-    // --- AJOUT : MISE À JOUR DU MENU PROFIL (Droite) ---
+    // 3. Mise à jour du Menu Profil (Header Droite)
     const headerUserIcon = document.getElementById('headerUserIcon');
     if(headerUserIcon) headerUserIcon.className = `fa-solid ${userAvatar} text-lg group-hover:scale-110 transition-transform`;
     
     const menuUserName = document.getElementById('menuUserName');
     if(menuUserName) menuUserName.innerText = targetName;
-    // ---------------------------------------------------
+
+    const dinoIcon = document.getElementById('dinoIcon');
+    if (dinoIcon) {
+        // On détermine si la créature doit dormir ou être éveillée selon l'état du timer
+        // Note : isTimerRunning est votre variable globale
+        const animationState = (typeof isTimerRunning !== 'undefined' && isTimerRunning) ? '' : 'animate-dino-sleep';
+        
+        // On force la mise à jour de l'icône avec le bon avatar
+        dinoIcon.className = `fa-solid ${userAvatar} text-6xl text-gray-500 transition-colors duration-300 ${animationState}`;
+    }
 }
 
 function updateCountdownDisplay(dateStr) {
