@@ -808,9 +808,14 @@ input[type=range]::-webkit-slider-runnable-track {
     <main class="flex-grow container mx-auto px-4 pb-20">
         <h1 class="text-3xl md:text-5xl font-display font-black text-white tracking-tight mb-8 mt-4 text-center md:text-left animate-fade-in-up" id="greetingDisplay">Bonjour, Docteur.</h1>
 	<div id="dashboardView">
-        <h2 class="text-gray-500 text-xs font-bold uppercase tracking-widest mb-4 pl-2">Tableau de bord</h2>
+    <div class="flex items-center justify-between mb-6 pl-2 animate-fade-in-up">
+        <h2 class="text-gray-500 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+            <i class="fa-solid fa-gauge-high text-blue-500/50"></i> Tableau de bord
+        </h2>
+        <div class="h-px flex-grow bg-white/5 ml-4"></div>
+    </div>
 
-        <section class="mb-12 grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up" style="animation-delay: 0.1s;">
+    <section class="mb-12 grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in-up" style="animation-delay: 0.1s;">
 
             <div class="card-panel rounded-3xl p-6 flex flex-col items-center justify-center relative shadow-2xl order-1 min-h-[400px]">
     <div class="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
@@ -991,9 +996,11 @@ input[type=range]::-webkit-slider-runnable-track {
         
         <section class="mb-12 animate-fade-in-up" style="animation-delay: 0.2s;">
             <div class="flex items-center justify-between mb-6 pl-2">
-                <h2 class="text-gray-500 text-xs font-bold uppercase tracking-widest">Statistiques Globales</h2>
-                <div class="h-px flex-grow bg-white/5 ml-4"></div>
-            </div>
+            <h2 class="text-gray-500 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-purple-500/50"></i> Statistiques Globales
+            </h2>
+            <div class="h-px flex-grow bg-white/5 ml-4"></div>
+        </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                 <div onclick="filterByStatus('lu')" class="cursor-pointer bg-[#111] border border-white/5 hover:border-green-500/30 hover:shadow-[0_0_30px_rgba(34,197,94,0.15)] transition-all duration-500 rounded-2xl p-6 flex items-center justify-between relative overflow-hidden group">
                     <div class="absolute -right-10 -top-10 w-48 h-48 bg-green-500/10 blur-[60px] rounded-full group-hover:bg-green-500/20 transition-all duration-500 pointer-events-none"></div>
@@ -1027,7 +1034,20 @@ input[type=range]::-webkit-slider-runnable-track {
                     </div>
                 </div>
             </div>
-            <div class="mb-4"><div class="flex justify-between items-end mb-3 px-2"><h3 class="text-white text-sm font-bold">Progression par Matière</h3><span class="text-[10px] text-gray-500 uppercase tracking-wider">Scroll Horizontal</span></div><div class="flex gap-4 overflow-x-auto hide-scrollbar p-4" id="subjectProgressContainer"></div></div>
+            <div class="mb-4">
+            <div class="flex items-center justify-between mb-4 pl-2">
+                <div class="flex items-center gap-4 flex-grow">
+                    <h2 class="text-gray-500 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-emerald-500/50"></i> Progression par Matière
+                    </h2>
+                    <div class="h-px flex-grow bg-white/5"></div>
+                </div>
+                <span class="text-[9px] text-gray-600 uppercase tracking-widest ml-4 font-mono hidden sm:block">
+                    <i class="fa-solid fa-arrows-left-right mr-1"></i> Scroll
+                </span>
+            </div>
+            <div class="flex gap-4 overflow-x-auto hide-scrollbar p-4" id="subjectProgressContainer"></div>
+        </div>
         </section>
 
         <section id="suggestionBlock" class="mb-12 animate-fade-in-up hidden" style="animation-delay: 0.3s;">
@@ -1917,7 +1937,7 @@ input[type=range]::-webkit-slider-runnable-track {
     </div>
 </div>
 
-	<<div id="subjectBurstOverlay" class="fixed inset-0 z-[200] flex items-center justify-center pointer-events-none hidden overflow-hidden">
+	<div id="subjectBurstOverlay" class="fixed inset-0 z-[200] flex items-center justify-center pointer-events-none hidden overflow-hidden">
     <div id="subjectBurstCircle" class="rounded-full absolute"></div>
     <i id="subjectBurstIcon" class="relative z-10 text-[50vmin] opacity-0 transform transition-all"></i>
 </div> 
@@ -2795,6 +2815,7 @@ if (dashboard) {
 }
 
 // --- FONCTION DE CHARGEMENT MISE À JOUR ---
+// --- FONCTION DE CHARGEMENT CORRIGÉE ---
 async function completeInitialization(userId) {
     console.log("Chargement des données pour :", userId);
 
@@ -2820,7 +2841,7 @@ async function completeInitialization(userId) {
     const dateElement = document.getElementById('dateToday');
     if(dateElement) dateElement.innerText = new Date().toLocaleDateString('fr-FR', options);
 
-    // 3. HYDRATATION DES DONNÉES (On écrase les variables locales avec celles du Cloud)
+    // 3. HYDRATATION DES DONNÉES
     
     // -- Progression --
     userXP = loadedData.xp || 0;
@@ -2847,10 +2868,9 @@ async function completeInitialization(userId) {
     userUnlockedAvatars = loadedData.unlocked_avatars || ['fa-dragon'];
     userLinks = loadedData.custom_links || [];
     
-    // -- Clé API (Priorité au Cloud, sinon on garde ce qu'on a trouvé dans loadProfile) --
+    // -- Clé API --
     if (loadedData.apiKey) {
         userApiKey = loadedData.apiKey;
-        // On met à jour le local storage pour la prochaine fois
         localStorage.setItem('ultimed_apiKey', userApiKey);
     }
 
@@ -2867,12 +2887,10 @@ async function completeInitialization(userId) {
     const savedSuggestionsDate = loadedData.daily_suggestions ? loadedData.daily_suggestions.date : null;
 
     if (savedSuggestionsDate === todayKey && loadedData.daily_suggestions && loadedData.daily_suggestions.suggestions.length > 0) {
-        // C'est la même journée : On garde
         console.log("Suggestions du jour restaurées.");
         currentSuggestions = loadedData.daily_suggestions.suggestions;
         dailySuggestionsDone = loadedData.daily_suggestions.done || {};
     } else {
-        // Nouvelle journée ou vide : On reset pour forcer la génération plus tard
         console.log("Nouvelle journée : Reset des suggestions.");
         currentSuggestions = [];
         dailySuggestionsDone = {};
@@ -2890,22 +2908,62 @@ async function completeInitialization(userId) {
     // Listeners dynamiques
     const searchInput = document.getElementById('searchInput');
     if(searchInput) {
-        // Astuce pour supprimer les anciens event listeners
         const newSearch = searchInput.cloneNode(true);
         searchInput.parentNode.replaceChild(newSearch, searchInput);
         newSearch.addEventListener('input', render);
     }
     const quickNotes = document.getElementById('quickNotes');
     if(quickNotes) {
-        // Pareil pour les notes
         const newNotes = quickNotes.cloneNode(true);
         quickNotes.parentNode.replaceChild(newNotes, quickNotes);
         newNotes.addEventListener('input', (e) => saveNotes(e.target.value));
-        // On remet le contenu
         newNotes.value = userSubjectNotes[currentNotesMatiere] || "";
     }
 
     setupAutocompleteSystems();
+
+    // --- SECTION NETTOYAGE & SYNCHRO ---
+
+    // A. Définition de la date d'aujourd'hui (UNE SEULE FOIS)
+    const savedDate = loadedData.last_update ? new Date(loadedData.last_update).toISOString().split('T')[0] : null;
+    const todayStr = new Date().toISOString().split('T')[0]; 
+
+    // B. Détecter le changement de jour (Nettoyage)
+    if (savedDate && savedDate !== todayStr) {
+        const oldLength = userTodos.length;
+        userTodos = userTodos.filter(t => !t.done); // On garde ce qui n'est pas fait
+        
+        if (userTodos.length < oldLength) {
+            console.log("Nettoyage matinal : Tâches terminées de la veille archivées.");
+        }
+    }
+
+    // C. SYNCHRO AU DÉMARRAGE : PLANNING DU JOUR -> TODO LIST
+    // (Note : on réutilise la variable todayStr déclarée au point A, on ne la recrée pas !)
+    const todayPlannedItems = userPlanning[todayStr] || [];
+
+    todayPlannedItems.forEach(itemId => {
+        // 1. On vérifie si l'item n'est pas déjà fait
+        const isDoneToday = userHistory[todayStr] && userHistory[todayStr].includes(itemId);
+        
+        // 2. On vérifie s'il n'est pas déjà dans la liste
+        const isInTodos = userTodos.some(t => t.linkedItemId === itemId);
+
+        // 3. Si c'est planifié, pas fait, et pas encore affiché : On l'ajoute !
+        if (!isDoneToday && !isInTodos) {
+            const itemInfo = rawItems.find(i => i.id === itemId);
+            const title = itemInfo ? itemInfo.t : "Item " + itemId;
+
+            userTodos.push({
+                text: `Item ${itemId} - ${title}`,
+                done: false, 
+                id: Date.now() + Math.random(), 
+                linkedItemId: itemId
+            });
+            
+            console.log(`Synchro auto : Item ${itemId} ajouté aux objectifs du jour.`);
+        }
+    });
 
     // 5. RENDU FINAL
     buildCourses(); 
@@ -2916,7 +2974,6 @@ async function completeInitialization(userId) {
 
     initSubjectCarousel();
     
-    // Génère de nouvelles suggestions UNIQUEMENT si la liste est vide (changement de jour)
     renderSuggestions(false);
 }
 
@@ -4195,7 +4252,7 @@ function addToTodos(id, title) {
     }
     
     // 3. SAUVEGARDE
-    saveData(); 
+    saveData();
     
     // 4. MISE À JOUR VISUELLE COMPLÈTE (Chaine de rendu)
     buildCourses();      // Reconstruit l'objet 'courses' avec les nouvelles vues/statuts
@@ -5136,14 +5193,23 @@ function togglePlayPause() {
 
 // 11. Changement de Thème
 function setMusicTheme(themeName) {
+    // Si c'est déjà ce thème qui joue, on ne fait rien pour éviter de couper
     if (audioSystem.currentTheme === themeName && audioSystem.isPlaying) {
         showToast("Ce thème joue déjà.", "info");
         return;
     }
+
+    // 1. Charger la configuration du thème
     loadTheme(themeName);
     
+    // 2. --- MODIFICATION ICI : FORCER LE DÉMARRAGE ---
+    // On ignore l'état précédent (pause/play), on lance la musique direct
+    startMusicLogic();
+    audioSystem.isPlaying = true;
+    
+    // 3. Feedback Visuel
     const names = { 'theme1': 'Focus', 'theme2': 'Épique', 'theme3': 'Drama', 'theme4': 'Nature' };
-    showToast(`Thème activé : ${names[themeName]}`, "success");
+    showToast(`Lecture : ${names[themeName]} 🎵`, "success");
     updateMusicUI();
 }
 
@@ -7526,16 +7592,42 @@ function undoHistoryItem(dateKey, itemId) {
         }
     }
 
+    // --- CORRECTION : SYNCHRO AVEC LA TODO LIST ---
+    const todayKey = new Date().toISOString().split('T')[0];
+    
+    // Si on annule une action sur la date d'AUJOURD'HUI
+    if (dateKey === todayKey) {
+        // On cherche l'item dans la liste des todos
+        const todo = userTodos.find(t => t.linkedItemId === itemId);
+        
+        if (todo) {
+            // Cas 1 : Il est là mais coché (barré) -> On le décoche
+            todo.done = false;
+        } else {
+            // Cas 2 : Il n'est plus là (supprimé) -> On le recrée
+            const itemInfo = rawItems.find(i => i.id === itemId);
+            const title = itemInfo ? itemInfo.t : "Item " + itemId;
+            
+            userTodos.push({
+                text: `Item ${itemId} - ${title}`,
+                done: false, // On le met "À faire"
+                id: Date.now(),
+                linkedItemId: itemId
+            });
+        }
+    }
+    // ----------------------------------------------
+
     // 3. Sauvegarde
     saveData();
 
     // 4. Mises à jour visuelles
-    renderDayDetails(dateKey); // Met à jour la liste à droite (l'item remonte dans "À faire")
+    renderDayDetails(dateKey); // Met à jour la liste à droite
     renderCalendar();          // Met à jour les points de couleur
     
-    // Ces fonctions mettent à jour la grille principale et les stats globales
     buildCourses();            
     updateStats();
+    renderTodos(); // <--- IMPORTANT : Met à jour la liste latérale
     render();                  
     
     playSound('click');
