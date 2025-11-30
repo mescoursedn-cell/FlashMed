@@ -6044,12 +6044,27 @@ function startTutorial() {
     userXPClaimed[id].maitrise = true;
 }
 
-    // 4. SAUVEGARDE ET RENDU
+        // 4. SAUVEGARDE
     saveData();
-    buildCourses(); // Indispensable pour redessiner la barre de points
-    updateStats();
-    render();
-}        
+    buildCourses(); // Met à jour les données globales
+    updateStats();  // Met à jour les graphiques en haut (léger)
+
+    // 5. MISE À JOUR CIBLÉE (DOM) - OPTIMISATION
+    // On ne relance PAS render(). On met à jour juste la carte.
+    const card = document.querySelector(`div[onclick*="openItemDetail('${id}')"]`); 
+    // Note: Le sélecteur ci-dessus cherche la div de la carte par son attribut onclick.
+    
+    if (card) {
+        // On remplace le HTML de cette carte spécifique par sa nouvelle version
+        // Il faut retrouver l'objet 'course' mis à jour
+        const updatedCourse = courses.find(c => c.id === id);
+        if (updatedCourse) {
+            card.outerHTML = getCardHTML(updatedCourse);
+        }
+    } else {
+        // Si on ne trouve pas la carte (cas rare), on fait un render complet par sécurité
+        render();
+    }
 
 	function playSound(type) {
             if (!audioSystem.enabled) return;
